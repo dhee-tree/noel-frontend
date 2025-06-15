@@ -1,0 +1,29 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.snowflake {
+  position: absolute;
+  color: var(--secondary-color);
+  opacity: 0.3;
+  border-radius: 50%;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* The 'fall' animation moves the snowflake from its starting position
+  (just off the top of the screen) to just off the bottom.
+*/
+@keyframes fall {
+  to {
+    transform: translateY(105vh);
+  }
+}
