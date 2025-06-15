@@ -16,8 +16,12 @@ const fontChristmas = Mountains_of_Christmas({
 });
 
 export const metadata: Metadata = {
-  title: "Noel - Secret Santa Made Magical",
-  description: "Noel makes organizing your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
+  title: {
+    default: "Noel - Secret Santa Made Magical",
+    template: "%s | Noel",
+  },
+  description: "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
+  keywords: "Noel, Secret Santa, gift exchange, holiday cheer",
 };
 
 export default function RootLayout({

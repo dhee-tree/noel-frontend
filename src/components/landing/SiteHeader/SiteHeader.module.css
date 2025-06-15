@@ -1,0 +1,106 @@
+.header {
+  background-color: rgba(238, 226, 222, 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary-color);
+  font-family: var(--font-christmas);
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+.desktopNav {
+  display: none;
+  gap: 2rem;
+}
+
+.navLink {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color-subtle);
+  transition: color 0.2s ease-in-out;
+}
+
+.navLink:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.authButtons {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobileMenuButton {
+  display: block;
+}
+
+/* Mobile Navigation Overlay */
+.mobileNavOverlay {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  max-width: 320px;
+  background-color: var(--bg-color);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease-in-out;
+  z-index: 100;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileNavOverlayOpen {
+  right: 0;
+}
+
+.mobileNavHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.mobileNavLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.mobileNavLink {
+    font-size: 1.25rem;
+}
+
+
+/* Use media query to show desktop elements on larger screens */
+@media (min-width: 768px) {
+  .desktopNav,
+  .authButtons {
+    display: flex;
+  }
+  .mobileMenuButton {
+    display: none;
+  }
+}
