@@ -1,7 +1,6 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button/Button';
 import { Gift, Menu, X } from 'lucide-react';
 import styles from './SiteHeader.module.css';
 
