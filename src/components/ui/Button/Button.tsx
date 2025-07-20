@@ -4,7 +4,7 @@ import styles from "./Button.module.css";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: "primary" | "outline" | "green";
+  variant?: "primary" | "outline" | "green" | "primaryOutline";
   href?: string;
   className?: string;
 }
@@ -20,7 +20,11 @@ export const Button = ({
 
   if (href) {
     return (
-      <Link href={href} className={buttonClassName}>
+      <Link
+        href={href}
+        className={buttonClassName}
+        style={{ textDecoration: "none" }}
+      >
         {children}
       </Link>
     );

@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { FcGoogle } from "react-icons/fc";
 import styles from "./Hero.module.css";
+import { signIn } from "@/auth";
 
 export const Hero = () => {
   return (
@@ -14,11 +16,17 @@ export const Hero = () => {
           Noel handle the rest!
         </p>
         <div className={styles.buttonGroup}>
-          <Button variant="green">
+          <Button
+            variant="green"
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          >
             <FcGoogle size={24} />
             Continue with Google
           </Button>
-          <Button variant="outline">Continue with Email</Button>
+
+          <Button variant="primaryOutline" href="/login">
+            Continue with Email
+          </Button>
         </div>
       </div>
     </section>

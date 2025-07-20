@@ -12,7 +12,6 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-/* Primary variant (default) */
 .primary {
   background-color: var(--primary-color);
   color: white;
@@ -22,7 +21,6 @@
   background-color: #9a1010;
 }
 
-/* Outline variant */
 .outline {
   background-color: transparent;
   color: var(--primary-color);
@@ -40,4 +38,14 @@
 
 .green:hover {
   background-color: #1a743e;
+}
+
+.primaryOutline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.primaryOutline:hover {
+  background-color: rgba(179, 19, 18, 0.05);
 }
