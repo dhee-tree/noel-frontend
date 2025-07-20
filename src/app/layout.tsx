@@ -3,6 +3,7 @@ import { Mountains_of_Christmas, Poppins } from "next/font/google";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const fontPoppins = Poppins({
   subsets: ["latin"],
@@ -21,7 +22,8 @@ export const metadata: Metadata = {
     default: "Noel - Secret Santa Made Magical",
     template: "%s | Noel",
   },
-  description: "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
+  description:
+    "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
   keywords: "Noel, Secret Santa, gift exchange, holiday cheer",
 };
 
@@ -39,7 +41,7 @@ export default function RootLayout({
           fontChristmas.variable
         )}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
