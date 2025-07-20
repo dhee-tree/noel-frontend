@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Mountains_of_Christmas, Poppins } from "next/font/google";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
