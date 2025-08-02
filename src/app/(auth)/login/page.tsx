@@ -6,7 +6,7 @@ import { LoginSchema, LoginFormFields } from "@/lib/validators/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
-import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import { Form, Button, Container, Alert } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import styles from "../register/Register.module.css";
 
@@ -37,8 +37,8 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } catch (err) {
-      console.error("Login failed:", err);
-      setApiError("An unexpected error occurred. Please try again.");
+      console.error("Login submission failed:", err);
+      setApiError("An unexpected error occurred.");
     }
   };
 

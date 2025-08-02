@@ -25,7 +25,29 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterUserForm) => {
     setApiError("");
     try {
-      console.log("Form data is valid:", data);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+            password2: data.confirmPassword,
+            first_name: data.firstName,
+            last_name: data.lastName,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        const message =
+          errorData.password?.[0] ||
+          errorData.email?.[0] ||
+          "Registration failed.";
+        throw new Error(message);
+      }
 
       const signInResult = await signIn("credentials", {
         redirect: false,
