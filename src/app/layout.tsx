@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Mountains_of_Christmas, Poppins } from "next/font/google";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { InactivityProvider } from "@/context/InactivityProvider";
+import { SessionProvider } from "next-auth/react";
 
 const fontPoppins = Poppins({
   subsets: ["latin"],
@@ -41,7 +43,11 @@ export default function RootLayout({
           fontChristmas.variable
         )}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <SessionProvider>
+          <InactivityProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </InactivityProvider>
+        </SessionProvider>
       </body>
     </html>
   );
