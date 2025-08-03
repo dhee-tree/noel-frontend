@@ -60,8 +60,12 @@ export default function RegisterPage() {
       } else {
         throw new Error("Sign-in after registration failed.");
       }
-    } catch (err: any) {
-      setApiError(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setApiError(err.message);
+      } else {
+        setApiError("An unexpected error occurred.");
+      }
     }
   };
 

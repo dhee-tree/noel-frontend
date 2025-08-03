@@ -21,7 +21,7 @@ declare module "next-auth" {
   /**
    * The shape of the user object returned from the `authorize` callback.
    */
-  interface User {
+  export interface User {
     id?: string;
     role?: string;
     email?: string;

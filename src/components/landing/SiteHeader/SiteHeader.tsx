@@ -70,7 +70,7 @@ export const SiteHeader = () => {
             </>
           ) : (
             <>
-              <span>Hi, {session?.user?.name?.split(" ")[0]}!</span>{" "}
+              <span>Hi, {session?.user?.firstName?.split(" ")[0]}!</span>{" "}
               <Button
                 variant="primary"
                 onClick={() => signOut({ callbackUrl: "/" })}

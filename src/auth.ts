@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
+import { User } from "next-auth";
 
 /**
  * This function is for refreshing the access token when it expires.
@@ -128,13 +129,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.refreshToken = user.refreshToken;
           token.id = user.id;
           token.firstName =
-            (user as any).first_name || user.name?.split(" ")[0] || "";
+            (user as User).first_name || user.name?.split(" ")[0] || "";
           token.lastName =
-            (user as any).last_name ||
+            (user as User).last_name ||
             user.name?.split(" ").slice(1).join(" ") ||
             "";
           token.email = user.email;
-          token.role = (user as any).role;
+          token.role = (user as User).role;
           token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
         }
       }

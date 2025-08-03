@@ -7,6 +7,7 @@ type InputFieldProps = {
   name: string;
   label: string;
   type?: "text" | "email" | "password";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>;
   error?: FieldError;
   placeholder?: string;
