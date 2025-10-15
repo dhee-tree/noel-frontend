@@ -5,7 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { InactivityProvider } from "@/context/InactivityProvider";
-import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
 
 const fontPoppins = Poppins({
   subsets: ["latin"],
@@ -29,11 +29,13 @@ export const metadata: Metadata = {
   keywords: "Noel, Secret Santa, gift exchange, holiday cheer",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -43,11 +45,11 @@ export default function RootLayout({
           fontChristmas.variable
         )}
       >
-        <SessionProvider>
+        <AuthProvider session={session}>
           <InactivityProvider>
-            <AuthProvider>{children}</AuthProvider>
+            {children}
           </InactivityProvider>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );

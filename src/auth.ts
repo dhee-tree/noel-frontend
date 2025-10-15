@@ -128,7 +128,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         if (account.provider === "credentials") {
-          console.log("Credentials user object:", user);
           token.accessToken = user.accessToken;
           token.refreshToken = user.refreshToken;
           token.id = user.id;
