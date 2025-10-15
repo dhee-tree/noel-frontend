@@ -4,15 +4,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, LoginFormFields } from "@/lib/validators/auth";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
-import styles from "../register/Register.module.css";
+import styles from "@/app/(auth)/register/Register.module.css";
 
 export default function LoginPage() {
   const [apiError, setApiError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const {
     register,
@@ -34,7 +36,7 @@ export default function LoginPage() {
       if (result?.error) {
         setApiError("Invalid email or password. Please try again.");
       } else if (result?.ok) {
-        router.push("/dashboard");
+        router.push(callbackUrl);
       }
     } catch (err) {
       console.error("Login submission failed:", err);
@@ -48,7 +50,7 @@ export default function LoginPage() {
         <h1 className={styles.title}>Welcome Back!</h1>
         <Button
           variant="success"
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          onClick={() => signIn("google", { callbackUrl })}
           className="w-100 d-flex align-items-center justify-content-center gap-2"
         >
           <FcGoogle size={24} />
