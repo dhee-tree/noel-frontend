@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
-import styles from "@/app/(auth)/register/Register.module.css";
+import styles from "../register/Register.module.css";
 
 export default function LoginPage() {
   const [apiError, setApiError] = useState("");

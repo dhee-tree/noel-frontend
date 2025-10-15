@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FaqItem } from "./FaqItem";
+import { FaqItem } from "@/components/landing/Faq/FaqItem";
 import styles from "./Faq.module.css";
 
 const faqData = [
