@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { FcGoogle } from "react-icons/fc";
 import styles from "./Hero.module.css";
-import { signIn } from "@/auth";
+import { signIn } from "next-auth/react";
 
 export const Hero = () => {
   return (

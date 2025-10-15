@@ -2,7 +2,12 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
-import { User } from "next-auth";
+import { User as NextAuthUser } from "next-auth";
+
+// Extend the User type to include is_verified
+type User = NextAuthUser & {
+  is_verified?: boolean;
+};
 
 /**
  * This function is for refreshing the access token when it expires.
@@ -76,8 +81,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (!userResponse.ok) return null;
           const user = await userResponse.json();
 
-          console.log("User data from API:", user);
-
           return {
             ...user,
             accessToken: tokens.access,
@@ -116,6 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.lastName = nameParts.slice(1).join(" ");
             token.email = backendData.user.email;
             token.role = backendData.user.role;
+            token.is_verified = backendData.user.is_verified;
             token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
           } catch (error) {
             console.error("Google Sign-In Callback Error:", error);
@@ -136,6 +140,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             "";
           token.email = user.email;
           token.role = (user as User).role;
+          token.is_verified = (user as User).is_verified;
           token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
         }
       }
@@ -160,6 +165,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: token.role,
           emailVerified: null,
         };
+        (session as any).is_verified = token.is_verified;
         session.accessToken = token.accessToken;
         session.error = token.error;
       }
