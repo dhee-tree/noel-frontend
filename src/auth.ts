@@ -147,7 +147,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.lastName = nameParts.slice(1).join(" ");
             token.email = backendData.user.email;
             token.role = backendData.user.role;
-            token.is_verified = backendData.user.is_verified;
+            token.is_verified = backendData.user.is_verified ?? true;
             token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
           } catch (error) {
             console.error("Google Sign-In Callback Error:", error);
@@ -193,7 +193,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: token.role,
           emailVerified: null,
         };
-        session.isVerified = token.is_verified;
+        session.isVerified = token.is_verified ?? false;
         session.accessToken = token.accessToken;
         session.error = token.error;
       }
