@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 interface ApiRequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  body?: any;
+  body?: Record<string, unknown> | unknown[];
   accessToken?: string;
   headers?: Record<string, string>;
 }

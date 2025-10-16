@@ -1,0 +1,89 @@
+.navbar {
+    background: linear-gradient(135deg, #c62828 0%, #8b0000 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 0;
+}
+
+.brand {
+    color: #fff !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s;
+}
+
+.brand:hover {
+    opacity: 0.9;
+}
+
+.navbar :global(.nav-link) {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.navbar :global(.nav-link):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+}
+
+.activeLink {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.navbar :global(.dropdown-toggle) {
+    color: #fff !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.navbar :global(.dropdown-toggle):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar :global(.dropdown-menu) {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.navbar :global(.dropdown-item) {
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.navbar :global(.dropdown-item):hover {
+    background-color: #f8f9fa;
+}
+
+.navbar :global(.dropdown-item:disabled) {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.navbar :global(.navbar-toggler) {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.navbar :global(.navbar-toggler-icon) {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+@media (max-width: 991px) {
+    .navbar :global(.navbar-collapse) {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+    }
+}
