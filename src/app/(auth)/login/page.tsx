@@ -15,6 +15,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const sessionExpired = searchParams.get("error") === "session_expired";
 
   const {
     register,
@@ -48,6 +49,13 @@ export default function LoginPage() {
     <Container className={styles.page}>
       <div className={styles.card}>
         <h1 className={styles.title}>Welcome Back!</h1>
+        
+        {sessionExpired && (
+          <Alert variant="warning" className="mb-3">
+            Your session has expired. Please log in again.
+          </Alert>
+        )}
+        
         <Button
           variant="success"
           onClick={() => signIn("google", { callbackUrl })}

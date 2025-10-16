@@ -44,6 +44,7 @@ export default async function RootLayout({
           fontPoppins.variable,
           fontChristmas.variable
         )}
+        suppressHydrationWarning
       >
         <AuthProvider session={session}>
           <InactivityProvider>

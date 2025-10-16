@@ -16,17 +16,30 @@ type User = NextAuthUser & {
  */
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/token/refresh/`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh: token.refreshToken }),
-      }
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/token/refresh/`;
+    
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: token.refreshToken }),
+    });
+
+    // Check content type before parsing JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Invalid content-type: ${contentType}`);
+    }
 
     const refreshedTokens = await response.json();
-    if (!response.ok) throw refreshedTokens;
+    
+    if (!response.ok) {
+      // If token is blacklisted or invalid, user needs to re-login
+      if (refreshedTokens.code === 'token_not_valid' || response.status === 401) {
+        console.error("Refresh token invalid or blacklisted. User needs to re-authenticate.");
+        return { ...token, error: "RefreshTokenExpired" };
+      }
+      throw refreshedTokens;
+    }
 
     return {
       ...token,
@@ -144,6 +157,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
+      // Only attempt refresh if token is expired
       if (
         token.accessTokenExpires &&
         Date.now() < (token.accessTokenExpires as number)
@@ -164,7 +178,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: token.role,
           emailVerified: null,
         };
-        (session as any).is_verified = token.is_verified;
+        session.isVerified = token.is_verified;
         session.accessToken = token.accessToken;
         session.error = token.error;
       }
