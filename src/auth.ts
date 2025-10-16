@@ -108,7 +108,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   session: { strategy: "jwt" },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
+      // Handle session updates from client-side update() calls
+      if (trigger === "update" && session) {
+        // Merge updated session data into token
+        if (session.user) {
+          token.firstName = session.user.firstName ?? token.firstName;
+          token.lastName = session.user.lastName ?? token.lastName;
+          token.email = session.user.email ?? token.email;
+          token.role = session.user.role ?? token.role;
+        }
+        if (session.isVerified !== undefined) {
+          token.is_verified = session.isVerified;
+        }
+        return token;
+      }
+
       if (account && user) {
         if (account.provider === "google") {
           try {
