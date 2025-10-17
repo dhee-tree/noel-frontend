@@ -1,5 +1,5 @@
 .section {
-  padding: 5rem 1.5rem;
+  padding: 3rem 1rem;
   background-color: rgba(179, 19, 18, 0.03);
 }
 
@@ -10,18 +10,19 @@
 
 .title {
   font-family: var(--font-christmas);
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1rem;
   text-align: center;
   color: var(--text-color-subtle);
-  max-width: 42rem;
-  margin: 0 auto 4rem auto;
+  max-width: 90%;
+  margin: 0 auto 2.5rem auto;
+  padding: 0 1rem;
 }
 
 .accordion {
@@ -43,9 +44,9 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 1.5rem;
+  padding: 1.25rem 1rem;
   text-align: left;
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--secondary-color);
   cursor: pointer;
@@ -64,14 +65,49 @@
 }
 
 .content {
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 0 1rem 1.25rem 1rem;
   color: var(--text-color-subtle);
   line-height: 1.6;
+  font-size: 0.95rem;
 }
 
-/* Media query for larger text on desktop */
+/* Tablet */
+@media (min-width: 640px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    max-width: 42rem;
+  }
+
+  .trigger {
+    padding: 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  .content {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Desktop */
 @media (min-width: 768px) {
+  .section {
+    padding: 5rem 1.5rem;
+  }
+
   .title {
     font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
   }
 }

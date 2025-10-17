@@ -1,5 +1,5 @@
 .section {
-  padding: 5rem 1.5rem;
+  padding: 3rem 1rem;
   background-color: var(--bg-color);
 }
 
@@ -10,29 +10,30 @@
 
 .title {
   font-family: var(--font-christmas);
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1rem;
   text-align: center;
   color: var(--text-color-subtle);
-  max-width: 42rem;
-  margin: 0 auto 4rem auto;
+  max-width: 90%;
+  margin: 0 auto 2.5rem auto;
+  padding: 0 1rem;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .card {
   background: linear-gradient(145deg, #ffffff, #faf6f5);
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 0.75rem;
   border: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
@@ -43,12 +44,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .avatar {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -62,7 +63,7 @@
 }
 
 .name {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--secondary-color);
 }
@@ -85,16 +86,66 @@
   color: var(--text-color-subtle);
   line-height: 1.7;
   flex-grow: 1;
+  font-size: 0.95rem;
 }
 
-/* Responsive grid for larger screens */
+/* Tablet */
+@media (min-width: 640px) {
+  .section {
+    padding: 4rem 1.5rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+    max-width: 42rem;
+  }
+
+  .grid {
+    gap: 2rem;
+  }
+
+  .card {
+    padding: 2rem;
+  }
+
+  .cardHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .name {
+    font-size: 1.125rem;
+  }
+
+  .quote {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop */
 @media (min-width: 768px) {
+  .section {
+    padding: 5rem 1.5rem;
+  }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .title {
     font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
   }
 }
 
