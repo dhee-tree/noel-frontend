@@ -7,3 +7,4 @@ export { Snowfall } from "@/components/landing/Snowfall/Snowfall";
 export { Cta } from "@/components/landing/Cta/Cta";
 export { SiteHeader } from "@/components/landing/SiteHeader/SiteHeader";
 export { SiteFooter } from "@/components/landing/Footer/Footer";
+export { BackToTop } from "@/components/landing/BackToTop/BackToTop";

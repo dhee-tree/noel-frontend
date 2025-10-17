@@ -6,6 +6,7 @@ import {
   Faq,
   Snowfall,
   Cta,
+  BackToTop,
 } from "@/components/landing";
 
 export default function LandingPage() {
@@ -20,6 +21,7 @@ export default function LandingPage() {
         <Faq />
         <Cta />
       </main>
+      <BackToTop />
     </div>
   );
 }
