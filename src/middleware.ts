@@ -5,7 +5,10 @@ import { publicRoutes, roleBasedRoutes, type UserRole } from "./config/routes";
 export default auth((req) => {
   const { nextUrl } = req;
   const session = req.auth;
-  const isLoggedIn = !!req.auth;
+  const isLoggedIn = !!req.auth?.user;
+
+  // Check if session has an error (expired/invalid token)
+  const hasSessionError = session?.error === "RefreshTokenExpired";
 
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
 
@@ -13,8 +16,10 @@ export default auth((req) => {
     nextUrl.pathname.startsWith(route)
   );
 
+  // Redirect logged-in users away from auth pages, unless session is invalid
   if (
     isLoggedIn &&
+    !hasSessionError &&
     (nextUrl.pathname === "/login" || nextUrl.pathname === "/register")
   ) {
     return NextResponse.redirect(new URL("/dashboard", nextUrl));
@@ -25,7 +30,8 @@ export default auth((req) => {
   }
 
   if (privateRoute) {
-    if (!isLoggedIn) {
+    // Redirect to login if not logged in OR session has error
+    if (!isLoggedIn || hasSessionError) {
       const callbackUrl = encodeURIComponent(nextUrl.pathname);
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl)
@@ -42,7 +48,7 @@ export default auth((req) => {
   }
 
   // If it's not a public route and not a defined private route, require authentication
-  if (!isLoggedIn) {
+  if (!isLoggedIn || hasSessionError) {
     const callbackUrl = encodeURIComponent(nextUrl.pathname);
     return NextResponse.redirect(
       new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl)
