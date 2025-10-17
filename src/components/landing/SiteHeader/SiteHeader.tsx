@@ -16,13 +16,26 @@ const navLinks = [
 
 export const SiteHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { data: session, status } = useSession();
-    const pathname = usePathname();
-    const [isMounted, setIsMounted] = useState(false);
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
   
 
   return (
@@ -90,6 +103,15 @@ export const SiteHeader = () => {
           <Menu size={28} color="var(--secondary-color)" />
         </button>
 
+        {/* Mobile Menu Backdrop */}
+        {isMobileMenuOpen && (
+          <div
+            className={styles.mobileNavBackdrop}
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close navigation menu"
+          />
+        )}
+
         {/* Mobile Menu Overlay */}
         <div
           className={`${styles.mobileNavOverlay} ${
@@ -103,6 +125,7 @@ export const SiteHeader = () => {
             <button
               onClick={() => setIsMobileMenuOpen(false)}
               aria-label="Close navigation menu"
+              className={styles.closeButton}
             >
               <X size={32} color="var(--secondary-color)" />
             </button>

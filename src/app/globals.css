@@ -9,13 +9,34 @@
   --font-christmas: var(--font-mountains-of-christmas);
 }
 
+/* Universal box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Reset and base styles */
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color-subtle);
   font-family: var(--font-sans);
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* Prevent any element from causing horizontal scroll */
+body > * {
+  max-width: 100vw;
 }
 
 h1,

@@ -53,44 +53,85 @@
 
 .mobileMenuButton {
   display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+/* Mobile Navigation Backdrop */
+.mobileNavBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Mobile Navigation Overlay */
 .mobileNavOverlay {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
-  height: 100%;
-  max-width: 320px;
+  right: 0;
+  width: 280px;
+  max-width: 85vw;
+  height: 100vh;
   background-color: var(--bg-color);
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
-  transition: right 0.3s ease-in-out;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
   z-index: 100;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .mobileNavOverlayOpen {
-  right: 0;
+  transform: translateX(0);
 }
 
 .mobileNavHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mobileNavLinks {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .mobileNavLink {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
+  padding: 0.5rem 0;
+  color: var(--secondary-color);
+  font-weight: 500;
 }
 
 

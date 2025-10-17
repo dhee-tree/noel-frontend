@@ -9,10 +9,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
       <Snowfall />
       <SiteHeader />
-      <main>{children}</main>
+      <main style={{ width: "100%", overflow: "hidden" }}>{children}</main>
       <SiteFooter />
     </div>
   );

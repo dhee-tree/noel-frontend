@@ -11,9 +11,9 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="relative">
+    <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
       <Snowfall />
-      <main>
+      <main style={{ width: "100%", overflow: "hidden" }}>
         <Hero />
         <Features />
         <HowItWorks />
