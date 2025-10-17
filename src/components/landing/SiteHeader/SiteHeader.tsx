@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Gift, Menu, X } from "lucide-react";
 import styles from "./SiteHeader.module.css";
-import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/Button/Button";
 import { usePathname } from 'next/navigation';
 
@@ -16,13 +15,7 @@ const navLinks = [
 
 export const SiteHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
   const pathname = usePathname();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -56,41 +49,23 @@ export const SiteHeader = () => {
         </nav>
 
         <div className={styles.authButtons}>
-          {status === "loading" || !isMounted ? (
-            <div style={{ height: "40px" }} />
-          ) : status === "unauthenticated" ? (
+          {pathname === "/" ? (
             <>
-              {(pathname === "/" || pathname === "/login") && (
-                <Button href="/register" variant="primary">
-                  Register
-                </Button>
-              )}
-              {pathname === "/register" && (
-                <Button href="/login" variant="primary">
-                  Login
-                </Button>
-              )}
-              {pathname !== "/" && pathname !== "/login" && pathname !== "/register" && (
-                <>
-                  <Button variant="outline" href="/login">
-                    Login
-                  </Button>
-                  <Button variant="primary" href="/register">
-                    Register
-                  </Button>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <span>Hi, {session?.user?.firstName?.split(" ")[0]}!</span>{" "}
-              <Button
-                variant="primary"
-                onClick={() => signOut({ callbackUrl: "/" })}
-              >
-                Logout
+              <Button href="/login" variant="primaryOutline">
+                Login
+              </Button>
+              <Button href="/register" variant="primary">
+                Sign Up
               </Button>
             </>
+          ) : pathname === "/register" ? (
+            <Button href="/login" variant="primary">
+              Login
+            </Button>
+          ) : (
+            <Button href="/register" variant="primary">
+              Sign Up
+            </Button>
           )}
         </div>
 
@@ -136,12 +111,42 @@ export const SiteHeader = () => {
                 key={link.href}
                 href={link.href}
                 className={`${styles.navLink} ${styles.mobileNavLink}`}
-                onClick={() => setIsMobileMenuOpen(false)} // Close menu on link click
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}
               </a>
             ))}
           </nav>
+
+          {/* Mobile Auth Buttons */}
+          <div className={styles.mobileAuthButtons}>
+            {pathname === "/" ? (
+              <>
+                <div onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button href="/login" variant="primaryOutline" className="w-100">
+                    Login
+                  </Button>
+                </div>
+                <div onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button href="/register" variant="primary" className="w-100">
+                    Sign Up
+                  </Button>
+                </div>
+              </>
+            ) : pathname === "/register" ? (
+              <div onClick={() => setIsMobileMenuOpen(false)}>
+                <Button href="/login" variant="primary" className="w-100">
+                  Login
+                </Button>
+              </div>
+            ) : (
+              <div onClick={() => setIsMobileMenuOpen(false)}>
+                <Button href="/register" variant="primary" className="w-100">
+                  Sign Up
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

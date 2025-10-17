@@ -24,8 +24,8 @@ export const Hero = () => {
             Continue with Google
           </Button>
 
-          <Button variant="primaryOutline" href="/login">
-            Continue with Email
+          <Button variant="primaryOutline" href="/register">
+            Get Started with Email
           </Button>
         </div>
       </div>
