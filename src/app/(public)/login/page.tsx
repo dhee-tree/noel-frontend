@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LoginClientPage from "@/app/(auth)/login/LoginClientPage";
+import LoginClientPage from "@/app/(public)/login/LoginClientPage";
 
 export const metadata: Metadata = {
   title: "Login",

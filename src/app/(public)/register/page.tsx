@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import RegisterClientPage from "@/app/(auth)/register/RegisterClientPage";
+import RegisterClientPage from "@/app/(public)/register/RegisterClientPage";
 
 export const metadata: Metadata = {
   title: "Register",

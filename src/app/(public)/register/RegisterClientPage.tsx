@@ -6,9 +6,17 @@ import { RegisterSchema, RegisterUserForm } from "@/lib/validators/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
+import { SelectField } from "@/components/forms/SelectField";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import styles from "./Register.module.css";
+
+const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+  { value: "prefer-not-to-say", label: "Prefer not to say" },
+];
 
 export default function RegisterClientPage() {
   const [apiError, setApiError] = useState("");
@@ -16,6 +24,7 @@ export default function RegisterClientPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterUserForm>({
@@ -36,6 +45,7 @@ export default function RegisterClientPage() {
             password2: data.confirmPassword,
             first_name: data.firstName,
             last_name: data.lastName,
+            gender: data.gender,
           }),
         }
       );
@@ -110,6 +120,16 @@ export default function RegisterClientPage() {
             register={register}
             error={errors.email}
           />
+
+          <SelectField
+            name="gender"
+            label="Gender"
+            control={control}
+            options={genderOptions}
+            error={errors.gender}
+            placeholder="Select your gender"
+          />
+
           <InputField
             name="password"
             label="Password"

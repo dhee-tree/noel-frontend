@@ -1,147 +1,86 @@
-# Layout Structure Documentation
+# App Layout Structure
 
 ## Overview
-This application uses a multi-layout architecture to separate public pages, authentication pages, and private authenticated pages.
+
+The application uses Next.js 14+ App Router with route groups to organize pages by authentication state and purpose.
+
+## Route Groups
+
+### `(public)` - Unauthenticated Public Pages
+**Purpose:** All public-facing pages accessible without authentication.
+
+**Layout:** `src/app/(public)/layout.tsx`
+- Snowfall effect for festive ambiance
+- SiteHeader with navigation and auth buttons
+- SiteFooter with links and social media
+- Full-width, overflow-hidden container
+
+**Pages:**
+- `/` - Landing page (Hero, Features, How It Works, Testimonials, FAQ, CTA)
+- `/login` - User login page
+- `/register` - New user registration page
+- Additional public routes...
+
+### `(pages)` - Authenticated Protected Pages
+**Purpose:** Dashboard and app features requiring authentication.
+
+**Layout:** `src/app/(pages)/layout.tsx` (if exists, or will be created)
+- Protected by middleware
+- Different header (user menu, notifications, etc.)
+- App-specific navigation
+
+**Pages:**
+- `/dashboard` - User dashboard
+- `/groups` - Secret Santa groups management
+- `/profile` - User profile settings
+- Additional protected routes...
 
 ## Layout Hierarchy
 
 ```
-app/
-├── layout.tsx                    → ROOT LAYOUT (Global)
-│   - Auth providers (SessionProvider)
-│   - Inactivity tracking
-│   - Global fonts & styles
-│   - Applies to: ALL pages
-│
-├── (main)/                       → PUBLIC PAGES
-│   ├── layout.tsx
-│   │   - Snowfall animation
-│   │   - Public site header
-│   │   - Footer
-│   │   - Applies to: Landing page
-│   └── page.tsx                  → Landing page (/)
-│
-├── (auth)/                       → AUTHENTICATION PAGES
-│   ├── layout.tsx
-│   │   - Snowfall animation
-│   │   - Public site header
-│   │   - Footer
-│   │   - Applies to: Login, Register
-│   ├── login/page.tsx            → Login page
-│   └── register/page.tsx         → Register page
-│
-└── (pages)/                      → PRIVATE PAGES (Authenticated)
-    ├── layout.tsx
-    │   - AuthNavbar (with user menu, navigation, logout)
-    │   - Applies to: Dashboard, Groups, etc.
-    ├── dashboard/page.tsx        → Dashboard
-    └── groups/page.tsx           → Groups
+src/app/
+├── layout.tsx                 # Root layout (fonts, metadata, providers)
+├── globals.css                # Global styles
+├── (public)/                  # Public pages route group
+│   ├── layout.tsx            # Snowfall + SiteHeader + SiteFooter
+│   ├── page.tsx              # Landing page
+│   ├── login/
+│   │   └── page.tsx          # Login page
+│   └── register/
+│       └── page.tsx          # Register page
+├── (pages)/                   # Protected pages route group
+│   ├── layout.tsx            # App layout (different from public)
+│   ├── dashboard/
+│   │   └── page.tsx
+│   └── groups/
+│       └── page.tsx
+└── api/                       # API routes
+    └── auth/
+        └── [...nextauth]/
+            └── route.ts
 ```
 
-## Components
+## Current Implementation Details
 
-### AuthNavbar
-**Location:** `src/components/navigation/AuthNavbar/`
-
-**Features:**
-- Christmas-themed red gradient navbar
-- Navigation links (Dashboard, Groups)
-- User dropdown menu with:
-  - Display name
-  - Email
-  - Logout button
-- Responsive mobile menu
-- Active link highlighting
-- Automatic callback URL handling on logout
-
-**Usage:**
+### Public Layout Styling
 ```tsx
-import { AuthNavbar } from '@/components/navigation/AuthNavbar/AuthNavbar';
-
-<AuthNavbar />
+<div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
+  <Snowfall />
+  <SiteHeader />
+  <main style={{ width: "100%", overflow: "hidden" }}>{children}</main>
+  <SiteFooter />
+</div>
 ```
 
-## Authentication Flow
+**Why these styles?**
+- `position: relative` - Allows absolute positioning of Snowfall effect
+- `width: 100%` - Prevents unexpected width calculations
+- `overflow: hidden` - Prevents horizontal scrolling issues on mobile
+- Applied to both container and main for defense in depth
 
-### Login with Callback URL
-1. User logs out from `/groups`
-2. Redirects to `/login?callbackUrl=%2Fgroups`
-3. User logs in (credentials or Google)
-4. Redirects back to `/groups`
-
-**Implementation:**
-```tsx
-// Logout handler
-const handleSignOut = () => {
-  const callbackUrl = encodeURIComponent(pathname);
-  signOut({ callbackUrl: `/login?callbackUrl=${callbackUrl}` });
-};
-
-// Login page
-const searchParams = useSearchParams();
-const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-// Use callbackUrl after successful login
-```
-
-## Session Management
-
-### Server-side Session
-```tsx
-// Root layout (app/layout.tsx)
-const session = await auth(); // Get session on server
-<AuthProvider session={session}>  // Pass to client
-```
-
-### Client-side Session
-```tsx
-// Any client component
-const { data: session } = useSession();
-// Access session.user, session.accessToken, etc.
-```
-
-## API Request Utilities
-
-### For Client Components (Recommended)
-```tsx
-import { useApiRequest } from "@/hooks/useApiRequest";
-
-const { apiRequest } = useApiRequest();
-const res = await apiRequest('/api/endpoint', { method: 'POST' });
-```
-
-### For Server Components / API Routes
-```tsx
-import { apiRequest } from "@/lib/utils";
-
-const res = await apiRequest('/api/endpoint', {
-  method: 'POST',
-  accessToken: session?.accessToken,
-});
-```
-
-## Styling
-
-- **Fonts:**
-  - Sans-serif: Poppins (300, 400, 500, 600, 700)
-  - Christmas: Mountains of Christmas (400, 700)
-  
-- **Theme:**
-  - Primary color: Christmas red (#c62828 to #8b0000 gradient)
-  - Bootstrap components
-  - Custom CSS modules
-
-## Route Protection
-
-Protected by middleware in `src/middleware.ts`:
-- Public routes: `/`, `/login`, `/register`, `/about`, `/faq`
-- Private routes: `/dashboard`, `/groups` (requires authentication)
-- Role-based access control available
-
-## Best Practices
-
-1. **Use route groups** `(name)` to organize layouts without affecting URLs
-2. **Keep root layout minimal** - only app-wide providers
-3. **Use specific layouts** for different page types (public vs. private)
-4. **Pass session from server** to client providers for hydration
-5. **Use hooks in client components** for convenience
-6. **Use direct utils in server components** for flexibility
+### Mobile Responsiveness
+All layouts use:
+- `overflow-x: hidden` to prevent horizontal scroll
+- `max-width: 100vw` to constrain width
+- `box-sizing: border-box` for predictable sizing
+- Mobile-first responsive breakpoints: 640px, 768px, 1024px
