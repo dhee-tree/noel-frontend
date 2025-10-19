@@ -19,6 +19,7 @@ type SelectFieldProps = {
   placeholder?: string;
   isSearchable?: boolean;
   isClearable?: boolean;
+  className?: string;
 };
 
 export const SelectField = ({
@@ -30,8 +31,8 @@ export const SelectField = ({
   placeholder = "Select...",
   isSearchable = false,
   isClearable = false,
+  className = "",
 }: SelectFieldProps) => {
-  // Custom styles to match Bootstrap's FloatingLabel and Form.Control
   const customStyles: StylesConfig<SelectOption, false> = {
     control: (base, state) => ({
       ...base,
@@ -81,7 +82,7 @@ export const SelectField = ({
   };
 
   return (
-    <Form.Group controlId={name} className="position-relative">
+    <Form.Group controlId={name} className={`position-relative ${className}`}>
       <Controller
         name={name}
         control={control}

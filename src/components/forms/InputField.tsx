@@ -20,10 +20,11 @@ export const InputField = ({
   register,
   error,
   placeholder = " ",
+  className,
   ...props
 }: InputFieldProps) => {
   return (
-    <Form.Group controlId={name}>
+    <Form.Group controlId={name} className={className}>
       <FloatingLabel label={label}>
         <Form.Control
           type={type}

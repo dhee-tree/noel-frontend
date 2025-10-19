@@ -7,15 +7,16 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
 import { SelectField } from "@/components/forms/SelectField";
+import { apiRequest } from "@/lib/utils";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import styles from "./Register.module.css";
 
 const genderOptions = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "other", label: "Other" },
-  { value: "prefer-not-to-say", label: "Prefer not to say" },
+  { value: "Male", label: "Male" },
+  { value: "Female", label: "Female" },
+  { value: "Other", label: "Other" },
+  { value: "Prefer not to say", label: "Prefer not to say" },
 ];
 
 export default function RegisterClientPage() {
@@ -34,27 +35,24 @@ export default function RegisterClientPage() {
   const onSubmit = async (data: RegisterUserForm) => {
     setApiError("");
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/register/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-            password2: data.confirmPassword,
-            first_name: data.firstName,
-            last_name: data.lastName,
-            gender: data.gender,
-          }),
-        }
-      );
+      const res = await apiRequest("/api/register/", {
+        method: "POST",
+        body: {
+          email: data.email,
+          password: data.password,
+          password2: data.confirmPassword,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          gender: data.gender,
+        },
+      });
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errorData = await res.json().catch(() => ({}));
         const message =
           errorData.password?.[0] ||
           errorData.email?.[0] ||
+          errorData.detail ||
           "Registration failed.";
         throw new Error(message);
       }
@@ -101,6 +99,7 @@ export default function RegisterClientPage() {
                 label="First Name"
                 register={register}
                 error={errors.firstName}
+                className="mb-3"
               />
             </Col>
             <Col sm={6}>
@@ -109,6 +108,7 @@ export default function RegisterClientPage() {
                 label="Last Name"
                 register={register}
                 error={errors.lastName}
+                className="mb-3"
               />
             </Col>
           </Row>
@@ -119,6 +119,7 @@ export default function RegisterClientPage() {
             type="email"
             register={register}
             error={errors.email}
+            className="mb-3"
           />
 
           <SelectField
@@ -128,6 +129,7 @@ export default function RegisterClientPage() {
             options={genderOptions}
             error={errors.gender}
             placeholder="Select your gender"
+            className="mb-3"
           />
 
           <InputField
@@ -136,6 +138,7 @@ export default function RegisterClientPage() {
             type="password"
             register={register}
             error={errors.password}
+            className="mb-3"
           />
           <InputField
             name="confirmPassword"
