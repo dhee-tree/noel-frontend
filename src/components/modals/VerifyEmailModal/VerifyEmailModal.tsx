@@ -1,20 +1,39 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Form, Alert } from "react-bootstrap";
 import { useSession } from "next-auth/react";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import { mutateCurrentUser } from "@/hooks/useCurrentUser";
-import { BaseModal } from "@/components/modals/BaseModal/BaseModal";
+import {
+  BaseModal,
+  BaseModalRef,
+} from "@/components/modals/BaseModal/BaseModal";
+import { toast } from "react-toastify";
+
+interface TriggerConfig {
+  type: "button" | "link";
+  label?: string;
+  icon?: React.ReactNode;
+  variant?: string;
+  size?: "sm" | "lg";
+  className?: string;
+  ariaLabel?: string;
+}
 
 interface VerifyEmailModalProps {
-  show: boolean;
-  onHide: () => void;
+  show?: boolean;
+  onHide?: () => void;
+
+  // Trigger configuration for self-contained mode
+  trigger?: TriggerConfig;
+
   onSuccess?: () => void;
 }
 
 export const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
   show,
   onHide,
+  trigger,
   onSuccess,
 }) => {
   const [code, setCode] = useState("");
@@ -23,6 +42,7 @@ export const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
   const [success, setSuccess] = useState(false);
   const { apiRequest, session } = useApiRequest();
   const { update: updateSession } = useSession();
+  const modalRef = useRef<BaseModalRef>(null);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -62,13 +82,12 @@ export const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
         isVerified: true,
       });
 
-      // Call onSuccess callback after short delay
-      setTimeout(() => {
-        onSuccess?.();
-        handleClose();
-      }, 1500);
+      toast.success("Email verified successfully!");
+      modalRef.current?.close();
+      onSuccess?.();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const message =
+        err instanceof Error ? err.message : "An unexpected error occurred.";
       setError(message);
     } finally {
       setLoading(false);
@@ -79,13 +98,15 @@ export const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
     setCode("");
     setError(null);
     setSuccess(false);
-    onHide();
+    if (onHide) onHide();
   };
 
   return (
     <BaseModal
+      ref={modalRef}
       show={show}
       onHide={handleClose}
+      trigger={trigger}
       title="Verify Your Email"
       footerButtons={[
         {

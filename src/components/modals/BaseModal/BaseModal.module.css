@@ -74,6 +74,45 @@
     box-shadow: none;
 }
 
+/* Brand outline button - outlined variant */
+.brandOutlineButton {
+    background-color: transparent !important;
+    border: 2px solid var(--accent-green, #166534) !important;
+    color: var(--accent-green, #166534) !important;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.brandOutlineButton:hover {
+    background-color: var(--accent-green, #166534) !important;
+    color: #fff !important;
+    border-color: var(--accent-green, #166534) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+}
+
+.brandOutlineButton:active,
+.brandOutlineButton:focus,
+.brandOutlineButton:focus-visible {
+    background-color: #14532d !important;
+    color: #fff !important;
+    border-color: #14532d !important;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(22, 101, 52, 0.25) !important;
+    outline: none;
+}
+
+.brandOutlineButton:disabled {
+    border-color: #86efac !important;
+    color: #86efac !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Responsive */
 @media (max-width: 576px) {
     .body {

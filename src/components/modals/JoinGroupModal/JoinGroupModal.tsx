@@ -1,57 +1,79 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Form } from "react-bootstrap";
-import { BaseModal } from "@/components/modals/BaseModal/BaseModal";
-import type { Session } from "next-auth";
+import {
+  BaseModal,
+  BaseModalRef,
+} from "@/components/modals/BaseModal/BaseModal";
+import { useApiRequest } from "@/hooks/useApiRequest";
+import { useUserGroups } from "@/hooks/useUserGroups";
+import { toast } from "react-toastify";
+
+interface TriggerConfig {
+  type: "button" | "link";
+  label?: string;
+  icon?: React.ReactNode;
+  variant?: string;
+  size?: "sm" | "lg";
+  className?: string;
+  ariaLabel?: string;
+}
 
 interface JoinGroupModalProps {
-  show: boolean;
-  onHide: () => void;
-  onSuccess?: (message: string) => void;
-  session?: Session & { accessToken?: string };
+  show?: boolean;
+  onHide?: () => void;
+
+  // Trigger configuration for self-contained mode
+  trigger?: TriggerConfig;
+
+  onSuccess?: () => void;
 }
 
 export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
   show,
   onHide,
+  trigger,
   onSuccess,
-  session,
 }) => {
   const [groupCode, setGroupCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const modalRef = useRef<BaseModalRef>(null);
+  const { apiRequest } = useApiRequest();
+  const { mutateGroups } = useUserGroups();
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     setLoading(true);
 
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL;
-      if (apiBase) {
-        const token = session?.accessToken ?? null;
-        const res = await fetch(`${apiBase}/api/groups/join/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify({ code: groupCode }),
-        });
-        if (!res.ok) {
-          const payload = await res.json().catch(() => ({}));
-          throw new Error(payload.detail || "Join group failed");
-        }
-        onSuccess?.(`Successfully requested to join "${groupCode}"`);
-      } else {
-        // Simulate success if no API configured
-        await new Promise((r) => setTimeout(r, 700));
-        onSuccess?.(`Request sent to join group "${groupCode}"`);
+      const res = await apiRequest("/api/groups/join/", {
+        method: "POST",
+        body: { group_code: groupCode },
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+
+        // Check for field-specific errors first (Django REST Framework pattern)
+        const groupCodeError = payload.group_code?.[0];
+        const detailError = payload.detail;
+
+        throw new Error(
+          groupCodeError ||
+            detailError ||
+            "Could not join group. Please try again."
+        );
       }
 
+      toast.success(`Successfully joined the group!`);
       setGroupCode("");
-      onHide();
+      modalRef.current?.close();
+      await mutateGroups();
+      onSuccess?.();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Could not join group. Try again.";
-      onSuccess?.(message);
+      const message =
+        err instanceof Error ? err.message : "Could not join group. Try again.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -59,13 +81,15 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
 
   const handleClose = () => {
     setGroupCode("");
-    onHide();
+    if (onHide) onHide();
   };
 
   return (
     <BaseModal
+      ref={modalRef}
       show={show}
       onHide={handleClose}
+      trigger={trigger}
       title="Join a Group"
       footerButtons={[
         {

@@ -1,5 +1,8 @@
+"use client";
 import React from "react";
 import { AuthNavbar } from "@/components/navigation/AuthNavbar/AuthNavbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function PagesLayout({
   children,
@@ -12,6 +15,20 @@ export default function PagesLayout({
     >
       <AuthNavbar />
       <main style={{ flex: 1 }}>{children}</main>
+      
+      {/* Toast notifications for all authenticated pages */}
+      <ToastContainer
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

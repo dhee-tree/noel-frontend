@@ -5,12 +5,24 @@ import { useSession } from "next-auth/react";
 import { swrFetcher } from "@/lib/swr-fetcher";
 
 export interface Group {
-  id: string | number;
-  name: string;
-  code?: string;
-  members?: number;
-  members_count?: number;
-  is_active?: boolean;
+  group_id: string;
+  group_name: string;
+  group_code?: string;
+  is_open?: boolean;
+  created_by_name?: string;
+  created_by_id?: number;
+  date_created?: string;
+  date_updated?: string;
+  member_count?: number;
+  members?: Array<{
+    user_id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    is_wrapped: boolean;
+    date_created: string;
+  }>;
 }
 
 /**
@@ -27,7 +39,7 @@ export function useUserGroups() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const shouldFetch = !!session?.accessToken && !!apiUrl;
-  const endpoint = shouldFetch ? `${apiUrl}/api/groups/my-groups/` : null;
+  const endpoint = shouldFetch ? `${apiUrl}/api/groups/` : null;
 
   const {
     data,
@@ -45,13 +57,15 @@ export function useUserGroups() {
     }
   );
 
-  // Normalize group data
+  // Normalize group data to maintain backward compatibility
   const normalizedGroups = data?.map((g) => ({
-    id: g.id ?? Math.random(),
-    name: g.name ?? "Unnamed Group",
-    code: g.code,
-    members: g.members_count ?? g.members,
-    isActive: g.is_active ?? true,
+    id: g.group_id,
+    name: g.group_name,
+    code: g.group_code,
+    members: g.member_count,
+    isActive: g.is_open ?? true,
+    // Keep original fields for direct access
+    ...g,
   }));
 
   return {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import type { Session } from "next-auth";
 import Image from "next/image";
 import {
@@ -11,22 +11,28 @@ import {
   Alert,
   Badge,
 } from "react-bootstrap";
-import { FaGift, FaUsers, FaStar, FaPlus, FaCalendarAlt } from "react-icons/fa";
-import { VerifyEmailModal, JoinGroupModal } from "@/components/modals";
+import {
+  FaGift,
+  FaUsers,
+  FaStar,
+  FaPlus,
+  FaCalendarAlt,
+  FaCopy,
+} from "react-icons/fa";
+import {
+  VerifyEmailModal,
+  JoinGroupModal,
+  CreateGroupModal,
+} from "@/components/modals";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useUserGroups } from "@/hooks/useUserGroups";
+import { toast } from "react-toastify";
 import styles from "./DashboardClientPage.module.css";
 
 export default function DashboardClientPage({ session }: { session: Session }) {
-
   // SWR hooks for data fetching
   const { user, isLoading: userLoading } = useCurrentUser();
-  const { groups, isLoading: loadingGroups, mutateGroups } = useUserGroups();
-
-  // UI state
-  const [showJoin, setShowJoin] = useState(false);
-  const [showVerify, setShowVerify] = useState(false);
-  const [apiMessage, setApiMessage] = useState<string | null>(null);
+  const { groups, isLoading: loadingGroups } = useUserGroups();
 
   const displayName =
     user?.first_name ??
@@ -36,10 +42,13 @@ export default function DashboardClientPage({ session }: { session: Session }) {
     session?.user?.email?.split?.("@")?.[0] ??
     "Friend";
 
-  const handleJoinSuccess = (message: string) => {
-    setApiMessage(message);
-    // Refetch groups after joining
-    mutateGroups();
+  const handleCopyCode = (code: string | undefined) => {
+    if (code) {
+      navigator.clipboard?.writeText(code);
+      toast.success("Group code copied!");
+    } else {
+      toast.error("No code to copy");
+    }
   };
 
   // Calculate days until Christmas
@@ -59,7 +68,6 @@ export default function DashboardClientPage({ session }: { session: Session }) {
 
   const daysLeft = getDaysUntilChristmas();
 
-  // small helper to render placeholders
   const renderGroupSkeleton = (key: number) => (
     <Col xs={12} sm={6} md={4} key={`skeleton-${key}`}>
       <Card className="mb-3 shadow-sm" role="status" aria-hidden>
@@ -75,10 +83,6 @@ export default function DashboardClientPage({ session }: { session: Session }) {
       </Card>
     </Col>
   );
-
-  const handleVerificationSuccess = () => {
-    // User data will be automatically refreshed by SWR after modal mutates it
-  };
 
   return (
     <Container className={styles.dashboardContainer}>
@@ -106,16 +110,15 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                   </p>
 
                   <div className={styles.heroButtons}>
-                    <Button
-                      variant="light"
-                      size="sm"
-                      onClick={() => (location.href = "/group/create")}
-                    >
-                      <FaPlus />{" "}
-                      <span className="d-none d-sm-inline ms-1">
-                        Create Group
-                      </span>
-                    </Button>
+                    <CreateGroupModal
+                      trigger={{
+                        type: "button",
+                        label: "Create Group",
+                        icon: <FaPlus />,
+                        variant: "light",
+                        size: "sm",
+                      }}
+                    />
                     <Button
                       variant="outline-light"
                       size="sm"
@@ -124,16 +127,15 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       <FaUsers />{" "}
                       <span className="d-none d-sm-inline ms-1">My Groups</span>
                     </Button>
-                    <Button
-                      variant="outline-light"
-                      size="sm"
-                      onClick={() => setShowJoin(true)}
-                    >
-                      <FaGift />{" "}
-                      <span className="d-none d-sm-inline ms-1">
-                        Join Group
-                      </span>
-                    </Button>
+                    <JoinGroupModal
+                      trigger={{
+                        type: "button",
+                        label: "Join Group",
+                        icon: <FaGift />,
+                        variant: "outline-light",
+                        size: "sm",
+                      }}
+                    />
                     <Button
                       variant="outline-light"
                       size="sm"
@@ -183,25 +185,17 @@ export default function DashboardClientPage({ session }: { session: Session }) {
             </small>
           </div>
 
-          {apiMessage && (
-            <Alert variant="info" className="mb-3">
-              {apiMessage}
-            </Alert>
-          )}
-
           {/* Show verification alert if not verified */}
           {!user?.is_verified && !userLoading && (
             <Alert variant="warning" className="mb-3">
               <strong>Verify your email</strong> to unlock all features.{" "}
-              <Alert.Link
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowVerify(true);
+              <VerifyEmailModal
+                trigger={{
+                  type: "link",
+                  label: "Verify now",
+                  className: "alert-link",
                 }}
-              >
-                Verify now
-              </Alert.Link>
+              />
             </Alert>
           )}
 
@@ -218,18 +212,20 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       Create a group, or join one using a code.
                     </p>
                     <div className={styles.emptyStateButtons}>
-                      <Button
-                        variant="success"
-                        onClick={() => (location.href = "/group/create")}
-                      >
-                        Create Group
-                      </Button>
-                      <Button
-                        variant="outline-primary"
-                        onClick={() => setShowJoin(true)}
-                      >
-                        Join Group
-                      </Button>
+                      <CreateGroupModal
+                        trigger={{
+                          type: "button",
+                          label: "Create Group",
+                          variant: "success",
+                        }}
+                      />
+                      <JoinGroupModal
+                        trigger={{
+                          type: "button",
+                          label: "Join Group",
+                          variant: "outline-primary",
+                        }}
+                      />
                     </div>
                   </Card.Body>
                 </Card>
@@ -240,46 +236,53 @@ export default function DashboardClientPage({ session }: { session: Session }) {
               groups &&
               groups.length > 0 &&
               groups.map((g) => (
-                <Col xs={12} sm={6} lg={4} key={g.id}>
+                <Col xs={12} sm={6} lg={4} key={g.group_id}>
                   <Card className={`${styles.groupCard} h-100`}>
                     <Card.Body className="d-flex flex-column">
                       <div className={styles.groupHeader}>
                         <div>
-                          <h5 className={styles.groupName}>{g.name}</h5>
+                          <h5 className={styles.groupName}>{g.group_name}</h5>
                           <small className="text-muted">
-                            Members: {g.members ?? "—"}
+                            Members: {g.member_count ?? "—"}
                           </small>
                         </div>
-                        <Badge bg={g.isActive ? "success" : "secondary"}>
-                          Active
+                        <Badge bg={g.is_open ? "success" : "secondary"}>
+                          {g.is_open ? "Open" : "Closed"}
                         </Badge>
                       </div>
 
                       <div className={styles.groupBody}>
-                        <p className="text-muted small mb-0">
-                          {g.code ? `Code: ${g.code}` : "No code available"}
-                        </p>
+                        {g.group_code ? (
+                          <div className={styles.codeSection}>
+                            <span className="text-muted small">Code:</span>
+                            <div className={styles.codeWrapper}>
+                              <code className={styles.groupCode}>
+                                {g.group_code}
+                              </code>
+                              <button
+                                className={styles.copyIcon}
+                                onClick={() => handleCopyCode(g.group_code)}
+                                aria-label="Copy code"
+                                title="Copy code"
+                              >
+                                <FaCopy />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-muted small mb-0">
+                            No code available
+                          </p>
+                        )}
                       </div>
 
                       <div className={styles.groupFooter}>
                         <Button
-                          size="sm"
-                          variant="outline-primary"
-                          href={`/group/${g.id}`}
+                          variant="primary"
+                          href={`/group/${g.group_id}`}
+                          className={styles.viewButton}
                         >
-                          View
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="light"
-                          onClick={() => {
-                            navigator.clipboard?.writeText(g.code ?? "");
-                            setApiMessage(
-                              g.code ? "Group code copied!" : "No code to copy"
-                            );
-                          }}
-                        >
-                          Copy Code
+                          View Group
                         </Button>
                       </div>
                     </Card.Body>
@@ -289,21 +292,6 @@ export default function DashboardClientPage({ session }: { session: Session }) {
           </Row>
         </Col>
       </Row>
-
-      {/* Join Group Modal */}
-      <JoinGroupModal
-        show={showJoin}
-        onHide={() => setShowJoin(false)}
-        onSuccess={handleJoinSuccess}
-        session={session}
-      />
-
-      {/* Verify Email Modal */}
-      <VerifyEmailModal
-        show={showVerify}
-        onHide={() => setShowVerify(false)}
-        onSuccess={handleVerificationSuccess}
-      />
     </Container>
   );
 }
