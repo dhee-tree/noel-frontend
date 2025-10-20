@@ -6,7 +6,7 @@ import { UseFormRegister, FieldError } from "react-hook-form";
 type InputFieldProps = {
   name: string;
   label: string;
-  type?: "text" | "email" | "password";
+  type?: "text" | "email" | "password" | "number" | "date" | "datetime-local" | "time" | "tel" | "url";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: UseFormRegister<any>;
   error?: FieldError;

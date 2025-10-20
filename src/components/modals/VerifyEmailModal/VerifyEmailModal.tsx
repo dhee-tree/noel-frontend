@@ -98,7 +98,8 @@ export const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
     setCode("");
     setError(null);
     setSuccess(false);
-    if (onHide) onHide();
+    modalRef.current?.close();
+    onHide?.();
   };
 
   return (

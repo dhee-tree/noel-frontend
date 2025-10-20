@@ -81,7 +81,8 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
 
   const handleClose = () => {
     setGroupCode("");
-    if (onHide) onHide();
+    modalRef.current?.close();
+    onHide?.();
   };
 
   return (

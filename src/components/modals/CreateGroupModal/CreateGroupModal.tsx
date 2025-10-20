@@ -6,12 +6,14 @@ import {
   BaseModalRef,
 } from "@/components/modals/BaseModal/BaseModal";
 import { InputField } from "@/components/forms/InputField";
+import { TextAreaField } from "@/components/forms/TextAreaField";
 import { useApiRequest } from "@/hooks/useApiRequest";
 import { useUserGroups } from "@/hooks/useUserGroups";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
+import { SelectField, SelectOption } from "@/components/forms/SelectField";
 
 interface TriggerConfig {
   type: "button" | "link";
@@ -38,7 +40,25 @@ const CreateGroupSchema = z.object({
     .string()
     .min(1, { message: "Group name is required." })
     .max(100, { message: "Group name must be less than 100 characters." }),
+  description: z.string().optional(),
+  theme: z.string().optional(),
+  budgetMin: z.string().optional(),
+  budgetMax: z.string().optional(),
+  assignmentRevealDate: z.string().optional(),
+  giftExchangeDeadline: z.string().optional(),
+  wishlistDeadline: z.string().optional(),
+  joinDeadline: z.string().optional(),
+  exchangeLocation: z.string().optional(),
 });
+
+const THEME_OPTIONS: SelectOption[] = [
+  { value: "christmas", label: "🎄 Christmas" },
+  { value: "winter", label: "❄️ Winter Holiday" },
+  { value: "office", label: "💼 Office Party" },
+  { value: "family", label: "👨‍👩‍👧‍👦 Family" },
+  { value: "friends", label: "👥 Friends" },
+  { value: "general", label: "🎁 General" },
+];
 
 type CreateGroupForm = z.infer<typeof CreateGroupSchema>;
 
@@ -55,6 +75,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
@@ -66,24 +87,58 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     setApiError("");
 
     try {
+      // Build request body with optional fields
+      const requestBody: Record<string, any> = {
+        group_name: data.groupName.trim(),
+      };
+
+      // Add optional fields only if they have values
+      if (data.description?.trim()) {
+        requestBody.description = data.description.trim();
+      }
+      if (data.theme) {
+        requestBody.theme = data.theme;
+      }
+      if (data.budgetMin) {
+        requestBody.budget_min = parseFloat(data.budgetMin);
+      }
+      if (data.budgetMax) {
+        requestBody.budget_max = parseFloat(data.budgetMax);
+      }
+      if (data.assignmentRevealDate) {
+        requestBody.assignment_reveal_date = data.assignmentRevealDate;
+      }
+      if (data.giftExchangeDeadline) {
+        requestBody.gift_exchange_deadline = data.giftExchangeDeadline;
+      }
+      if (data.wishlistDeadline) {
+        requestBody.wishlist_deadline = data.wishlistDeadline;
+      }
+      if (data.joinDeadline) {
+        requestBody.join_deadline = data.joinDeadline;
+      }
+      if (data.exchangeLocation?.trim()) {
+        requestBody.exchange_location = data.exchangeLocation.trim();
+      }
+
       const res = await apiRequest("/api/groups/", {
         method: "POST",
-        body: { group_name: data.groupName.trim() },
+        body: requestBody,
       });
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        
+
         // Check for field-specific errors first (Django REST Framework pattern)
         const groupNameError = errorData.group_name?.[0];
         const nameError = errorData.name?.[0];
         const detailError = errorData.detail;
-        
+
         throw new Error(
-          groupNameError || 
-          nameError || 
-          detailError || 
-          "Failed to create group. Please try again."
+          groupNameError ||
+            nameError ||
+            detailError ||
+            "Failed to create group. Please try again."
         );
       }
 
@@ -105,7 +160,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const handleClose = () => {
     reset();
     setApiError("");
-    if (onHide) onHide();
+    modalRef.current?.close();
+    onHide?.();
   };
 
   return (
@@ -115,6 +171,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       onHide={handleClose}
       trigger={trigger}
       title="Create a New Group"
+      size="lg"
       footerButtons={[
         {
           label: "Cancel",
@@ -132,23 +189,168 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       ]}
     >
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <InputField
-          name="groupName"
-          label="Group Name"
-          type="text"
-          register={register}
-          error={errors.groupName}
-          placeholder="e.g. Family Secret Santa 2025"
-          autoFocus
-          disabled={isSubmitting}
-          maxLength={100}
-        />
-        <Form.Text className="text-muted d-block mb-3">
-          Give your Secret Santa group a memorable name.
-        </Form.Text>
+        {/* Basic Information */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Basic Information</h6>
+          <InputField
+            name="groupName"
+            label="Group Name"
+            type="text"
+            register={register}
+            error={errors.groupName}
+            placeholder="e.g. Family Secret Santa 2025"
+            autoFocus
+            disabled={isSubmitting}
+            maxLength={100}
+          />
+
+          <TextAreaField
+            name="description"
+            label="Description (Optional)"
+            register={register}
+            error={errors.description}
+            placeholder="Add any rules, themes, or special instructions..."
+            disabled={isSubmitting}
+            maxLength={500}
+            rows={3}
+            resize={false}
+            helpText="Let members know what to expect"
+            className="mb-3"
+          />
+
+          <Controller
+            name="theme"
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                name="theme"
+                label="Theme (Optional)"
+                control={control}
+                error={errors.theme}
+                options={THEME_OPTIONS}
+                placeholder="Select a theme..."
+                isSearchable={false}
+                isClearable={true}
+                className="mb-3"
+              />
+            )}
+          />
+        </div>
+
+        {/* Budget Settings */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Budget (Optional)</h6>
+          <div className="row">
+            <div className="col-md-6">
+              <InputField
+                name="budgetMin"
+                label="Minimum (£)"
+                type="number"
+                register={register}
+                error={errors.budgetMin}
+                placeholder="e.g. 20"
+                disabled={isSubmitting}
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <div className="col-md-6">
+              <InputField
+                name="budgetMax"
+                label="Maximum (£)"
+                type="number"
+                register={register}
+                error={errors.budgetMax}
+                placeholder="e.g. 50"
+                disabled={isSubmitting}
+                step="0.01"
+                min="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Important Dates */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Important Dates (Optional)</h6>
+          <div className="row">
+            <div className="col-md-6">
+              <InputField
+                name="joinDeadline"
+                label="Join Deadline"
+                type="date"
+                register={register}
+                error={errors.joinDeadline}
+                disabled={isSubmitting}
+              />
+              <Form.Text className="text-muted d-block mb-3">
+                Last day to join the group
+              </Form.Text>
+            </div>
+            <div className="col-md-6">
+              <InputField
+                name="wishlistDeadline"
+                label="Wishlist Deadline"
+                type="date"
+                register={register}
+                error={errors.wishlistDeadline}
+                disabled={isSubmitting}
+              />
+              <Form.Text className="text-muted d-block mb-3">
+                Last day to submit wishlists
+              </Form.Text>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <InputField
+                name="assignmentRevealDate"
+                label="Assignment Reveal Date"
+                type="date"
+                register={register}
+                error={errors.assignmentRevealDate}
+                disabled={isSubmitting}
+              />
+              <Form.Text className="text-muted d-block mb-3">
+                When Secret Santa assignments are revealed
+              </Form.Text>
+            </div>
+            <div className="col-md-6">
+              <InputField
+                name="giftExchangeDeadline"
+                label="Gift Exchange Date"
+                type="date"
+                register={register}
+                error={errors.giftExchangeDeadline}
+                disabled={isSubmitting}
+              />
+              <Form.Text className="text-muted d-block mb-3">
+                When gifts should be exchanged
+              </Form.Text>
+            </div>
+          </div>
+        </div>
+
+        {/* Exchange Details */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Exchange Details (Optional)</h6>
+          <InputField
+            name="exchangeLocation"
+            label="Exchange Location"
+            type="text"
+            register={register}
+            error={errors.exchangeLocation}
+            placeholder="e.g. Office Conference Room or Virtual/Mail"
+            disabled={isSubmitting}
+            maxLength={200}
+          />
+          <Form.Text className="text-muted">
+            Where gifts will be exchanged
+          </Form.Text>
+        </div>
 
         {apiError && (
-          <Alert variant="danger" className="mt-2">
+          <Alert variant="danger" className="mt-3">
             {apiError}
           </Alert>
         )}

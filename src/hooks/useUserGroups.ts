@@ -14,6 +14,19 @@ export interface Group {
   date_created?: string;
   date_updated?: string;
   member_count?: number;
+  
+  // New fields from Amos
+  assignment_reveal_date?: string | null;
+  gift_exchange_deadline?: string | null;
+  wishlist_deadline?: string | null;
+  join_deadline?: string | null;
+  budget_min?: number | null;
+  budget_max?: number | null;
+  budget_currency?: string;
+  description?: string | null;
+  exchange_location?: string | null;
+  theme?: string;
+  
   members?: Array<{
     user_id: number;
     username: string;
