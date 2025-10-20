@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import type { Session } from "next-auth";
 import Image from "next/image";
 import {
@@ -18,6 +18,8 @@ import {
   FaPlus,
   FaCalendarAlt,
   FaCopy,
+  FaMoneyBillWave,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import {
   VerifyEmailModal,
@@ -67,6 +69,53 @@ export default function DashboardClientPage({ session }: { session: Session }) {
   };
 
   const daysLeft = getDaysUntilChristmas();
+
+  // Calculate dashboard stats
+  const stats = useMemo(() => {
+    if (!groups) return null;
+
+    const totalGroups = groups.length;
+    const activeGroups = groups.filter((g) => g.is_open).length;
+    const totalMembers = groups.reduce(
+      (sum, g) => sum + (g.member_count || 0),
+      0
+    );
+    const groupsCreated = groups.filter(
+      (g) => g.created_by_id === user?.id
+    ).length;
+
+    return {
+      totalGroups,
+      activeGroups,
+      totalMembers,
+      groupsCreated,
+    };
+  }, [groups, user?.id]);
+
+  // Format date helper
+  const formatDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  };
+
+  // Get theme emoji
+  const getThemeEmoji = (theme?: string): string => {
+    const themeMap: Record<string, string> = {
+      christmas: "🎄",
+      hanukkah: "🕎",
+      kwanzaa: "🕯️",
+      winter: "❄️",
+      office: "💼",
+      family: "👨‍👩‍👧‍👦",
+      friends: "👥",
+      general: "🎁",
+    };
+    return themeMap[theme || "general"] || "🎁";
+  };
 
   const renderGroupSkeleton = (key: number) => (
     <Col xs={12} sm={6} md={4} key={`skeleton-${key}`}>
@@ -171,6 +220,52 @@ export default function DashboardClientPage({ session }: { session: Session }) {
         </Col>
       </Row>
 
+      {/* Stats Cards */}
+      {stats && stats.totalGroups > 0 && (
+        <Row className="justify-content-center mt-4">
+          <Col xs={12}>
+            <Row className="g-3">
+              <Col xs={6} md={3}>
+                <Card className={styles.statCard}>
+                  <Card.Body className="text-center">
+                    <FaUsers className={styles.statIcon} />
+                    <h3 className={styles.statNumber}>{stats.totalGroups}</h3>
+                    <p className={styles.statLabel}>Total Groups</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={6} md={3}>
+                <Card className={styles.statCard}>
+                  <Card.Body className="text-center">
+                    <FaGift className={styles.statIcon} />
+                    <h3 className={styles.statNumber}>{stats.activeGroups}</h3>
+                    <p className={styles.statLabel}>Active Groups</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={6} md={3}>
+                <Card className={styles.statCard}>
+                  <Card.Body className="text-center">
+                    <FaUsers className={styles.statIcon} />
+                    <h3 className={styles.statNumber}>{stats.totalMembers}</h3>
+                    <p className={styles.statLabel}>Total Members</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col xs={6} md={3}>
+                <Card className={styles.statCard}>
+                  <Card.Body className="text-center">
+                    <FaStar className={styles.statIcon} />
+                    <h3 className={styles.statNumber}>{stats.groupsCreated}</h3>
+                    <p className={styles.statLabel}>Created by You</p>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      )}
+
       {/* Groups Section */}
       <Row className="justify-content-center mt-4">
         <Col xs={12}>
@@ -241,18 +336,65 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                     <Card.Body className="d-flex flex-column">
                       <div className={styles.groupHeader}>
                         <div>
-                          <h5 className={styles.groupName}>{g.group_name}</h5>
+                          <h5 className={styles.groupName}>
+                            {getThemeEmoji(g.theme)} {g.group_name}
+                          </h5>
                           <small className="text-muted">
-                            Members: {g.member_count ?? "—"}
+                            <FaUsers className="me-1" />
+                            {g.member_count ?? 0} member
+                            {(g.member_count ?? 0) !== 1 ? "s" : ""}
                           </small>
                         </div>
-                        <Badge bg={g.is_open ? "success" : "secondary"}>
-                          {g.is_open ? "Open" : "Closed"}
-                        </Badge>
+                        <div className="d-flex flex-column gap-1 align-items-end">
+                          <Badge bg={g.is_open ? "success" : "secondary"}>
+                            {g.is_open ? "Open" : "Closed"}
+                          </Badge>
+                          {g.is_white_elephant && (
+                            <Badge bg="warning" className="text-dark">
+                              🎲 White Elephant
+                            </Badge>
+                          )}
+                        </div>
                       </div>
 
                       <div className={styles.groupBody}>
-                        {g.group_code ? (
+                        {/* Budget */}
+                        {(g.budget_min || g.budget_max) && (
+                          <div className="mb-2">
+                            <small className="text-muted d-flex align-items-center">
+                              <FaMoneyBillWave className="me-1" />
+                              Budget:{" "}
+                              {g.budget_min && g.budget_max
+                                ? `${g.budget_currency || "£"}${g.budget_min} - ${g.budget_currency || "£"}${g.budget_max}`
+                                : g.budget_min
+                                ? `From ${g.budget_currency || "£"}${g.budget_min}`
+                                : `Up to ${g.budget_currency || "£"}${g.budget_max}`}
+                            </small>
+                          </div>
+                        )}
+
+                        {/* Exchange Date */}
+                        {g.gift_exchange_deadline && (
+                          <div className="mb-2">
+                            <small className="text-muted d-flex align-items-center">
+                              <FaCalendarAlt className="me-1" />
+                              Exchange: {formatDate(g.gift_exchange_deadline)}
+                            </small>
+                          </div>
+                        )}
+
+                        {/* Location */}
+                        {g.exchange_location && (
+                          <div className="mb-2">
+                            <small className="text-muted d-flex align-items-center">
+                              <FaMapMarkerAlt className="me-1" />
+                              {g.exchange_location}
+                            </small>
+                          </div>
+                        )}
+
+                        {/* Group Code */}
+                        {g.group_code && (
                           <div className={styles.codeSection}>
                             <span className="text-muted small">Code:</span>
                             <div className={styles.codeWrapper}>
@@ -269,10 +411,6 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                               </button>
                             </div>
                           </div>
-                        ) : (
-                          <p className="text-muted small mb-0">
-                            No code available
-                          </p>
                         )}
                       </div>
 

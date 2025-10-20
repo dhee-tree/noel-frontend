@@ -26,6 +26,7 @@ export interface Group {
   description?: string | null;
   exchange_location?: string | null;
   theme?: string;
+  is_white_elephant?: boolean;
   
   members?: Array<{
     user_id: number;

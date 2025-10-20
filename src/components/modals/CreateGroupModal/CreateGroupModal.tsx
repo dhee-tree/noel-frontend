@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { Form, Alert } from "react-bootstrap";
+import { Form, Alert, OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   BaseModal,
   BaseModalRef,
@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { SelectField, SelectOption } from "@/components/forms/SelectField";
+import { FaQuestionCircle } from "react-icons/fa";
 
 interface TriggerConfig {
   type: "button" | "link";
@@ -49,6 +50,7 @@ const CreateGroupSchema = z.object({
   wishlistDeadline: z.string().optional(),
   joinDeadline: z.string().optional(),
   exchangeLocation: z.string().optional(),
+  isWhiteElephant: z.boolean().optional(),
 });
 
 const THEME_OPTIONS: SelectOption[] = [
@@ -119,6 +121,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       }
       if (data.exchangeLocation?.trim()) {
         requestBody.exchange_location = data.exchangeLocation.trim();
+      }
+      if (data.isWhiteElephant !== undefined) {
+        requestBody.is_white_elephant = data.isWhiteElephant;
       }
 
       const res = await apiRequest("/api/groups/", {
@@ -347,6 +352,54 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           <Form.Text className="text-muted">
             Where gifts will be exchanged
           </Form.Text>
+        </div>
+
+        {/* White Elephant Mode */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">
+            Game Mode 🎮
+            <OverlayTrigger
+              placement="right"
+              overlay={
+                <Tooltip id="white-elephant-tooltip">
+                  <strong>White Elephant Mode</strong>
+                  <br />
+                  One random person will be chosen as &quot;The Snatcher&quot; 24
+                  hours before the exchange. They can steal ANY gift! Will it be
+                  you? 👀
+                  <br />
+                  <br />
+                  <em>Traditional mode is classic Secret Santa.</em>
+                </Tooltip>
+              }
+            >
+              <FaQuestionCircle
+                className="ms-2"
+                style={{ cursor: "pointer", fontSize: "0.9rem" }}
+              />
+            </OverlayTrigger>
+          </h6>
+
+          <Form.Group className="mb-3">
+            <Form.Check
+              type="switch"
+              id="isWhiteElephant"
+              label={
+                <span>
+                  Enable White Elephant Mode 🎲{" "}
+                  <small className="text-muted">
+                    (adds gift-stealing excitement!)
+                  </small>
+                </span>
+              }
+              {...register("isWhiteElephant")}
+              disabled={isSubmitting}
+            />
+            <Form.Text className="text-muted">
+              When enabled, one person will randomly get the power to snatch
+              someone else&apos;s gift
+            </Form.Text>
+          </Form.Group>
         </div>
 
         {apiError && (
