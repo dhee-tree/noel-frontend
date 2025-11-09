@@ -1,0 +1,200 @@
+.container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  max-width: 1200px;
+}
+
+.backButton {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 0;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.backButton:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.headerCard {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titleSection {
+  flex: 1;
+  min-width: 200px;
+}
+
+.groupTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--secondary-color, #2b2a4c);
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.description {
+  margin-top: 1rem;
+  margin-bottom: 0;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.infoCard {
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.infoCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.infoIcon {
+  font-size: 2rem;
+  color: var(--primary-color, #c62828);
+  margin-bottom: 0.75rem;
+}
+
+.infoTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.infoValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--secondary-color, #2b2a4c);
+  margin-bottom: 0;
+}
+
+.datesCard {
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+.datesCard .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+}
+
+.membersCard {
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+.membersHeader {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+}
+
+.memberItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  transition: background-color 0.2s;
+}
+
+.memberItem:hover {
+  background-color: #f8f9fa;
+}
+
+.memberInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.memberAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color, #c62828), var(--accent-green, #166534));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.memberDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.memberDetails strong {
+  font-size: 1rem;
+  color: var(--secondary-color, #2b2a4c);
+}
+
+.memberDetails .text-muted {
+  font-size: 0.875rem;
+}
+
+.dangerCard {
+  border: 2px solid #dc3545;
+  border-radius: 10px;
+}
+
+.dangerCard .card-header {
+  background-color: #fff5f5;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .groupTitle {
+    font-size: 1.5rem;
+  }
+
+  .headerContent {
+    flex-direction: column;
+  }
+
+  .headerActions {
+    width: 100%;
+  }
+
+  .headerActions button {
+    flex: 1;
+  }
+}
