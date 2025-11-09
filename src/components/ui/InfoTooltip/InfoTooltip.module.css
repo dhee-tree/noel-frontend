@@ -1,0 +1,40 @@
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+  margin-left: 4px;
+}
+
+.icon {
+  color: #718096;
+  transition: color 0.2s ease;
+}
+
+.icon:hover {
+  color: var(--primary-color);
+}
+
+.icon-sm {
+  font-size: 0.75rem;
+}
+
+.icon-md {
+  font-size: 0.875rem;
+}
+
+.icon-lg {
+  font-size: 1rem;
+}
+
+.tooltip {
+  max-width: 300px;
+  position: fixed !important;
+  z-index: 9999;
+}
+
+.tooltip :global(.tooltip-inner) {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
