@@ -9,13 +9,13 @@ export interface Group {
   group_name: string;
   group_code?: string;
   is_open?: boolean;
+  is_archived?: boolean;
   created_by_name?: string;
   created_by_id?: number;
   date_created?: string;
   date_updated?: string;
   member_count?: number;
   
-  // New fields from Amos
   assignment_reveal_date?: string | null;
   gift_exchange_deadline?: string | null;
   wishlist_deadline?: string | null;
@@ -39,14 +39,20 @@ export interface Group {
   }>;
 }
 
+interface GroupsResponse {
+  active: Group[];
+  archived: Group[];
+}
+
 /**
  * Custom hook to fetch and manage user's groups with SWR.
+ * Returns separate arrays for active and archived groups.
  *
  * @example
- * const { groups, isLoading, error, mutateGroups } = useUserGroups();
+ * const { activeGroups, archivedGroups, isLoading, error, mutateGroups } = useUserGroups();
  *
  * // After joining a group:
- * await mutateGroups(); // Refetch groups
+ * await mutateGroups();
  */
 export function useUserGroups() {
   const { data: session } = useSession();
@@ -60,9 +66,9 @@ export function useUserGroups() {
     error,
     isLoading,
     mutate: mutateGroups,
-  } = useSWR<Group[]>(
+  } = useSWR<GroupsResponse>(
     endpoint,
-    (url: string) => swrFetcher<Group[]>(url, session?.accessToken as string),
+    (url: string) => swrFetcher<GroupsResponse>(url, session?.accessToken as string),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: true,
@@ -71,19 +77,9 @@ export function useUserGroups() {
     }
   );
 
-  // Normalize group data to maintain backward compatibility
-  const normalizedGroups = data?.map((g) => ({
-    id: g.group_id,
-    name: g.group_name,
-    code: g.group_code,
-    members: g.member_count,
-    isActive: g.is_open ?? true,
-    // Keep original fields for direct access
-    ...g,
-  }));
-
   return {
-    groups: normalizedGroups,
+    activeGroups: data?.active || [],
+    archivedGroups: data?.archived || [],
     isLoading,
     error,
     mutateGroups,
