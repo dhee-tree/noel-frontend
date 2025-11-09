@@ -26,15 +26,17 @@ import {
   JoinGroupModal,
   CreateGroupModal,
 } from "@/components/modals";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useUserGroups } from "@/hooks/useUserGroups";
+import { useCurrentUser, useUserGroups } from "@/hooks";
 import { toast } from "react-toastify";
 import styles from "./DashboardClientPage.module.css";
+import { InfoTooltip } from "@/components/ui";
 
 export default function DashboardClientPage({ session }: { session: Session }) {
   // SWR hooks for data fetching
   const { user, isLoading: userLoading } = useCurrentUser();
-  const { groups, isLoading: loadingGroups } = useUserGroups();
+  const { activeGroups, isLoading: loadingGroups } = useUserGroups();
+
+  const groups = activeGroups;
 
   const displayName =
     user?.first_name ??
@@ -173,8 +175,7 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       size="sm"
                       onClick={() => (location.href = "/groups")}
                     >
-                      <FaUsers />{" "}
-                      <span className="d-none d-sm-inline ms-1">My Groups</span>
+                      <FaUsers /> <span>My Groups</span>
                     </Button>
                     <JoinGroupModal
                       trigger={{
@@ -190,10 +191,8 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       size="sm"
                       onClick={() => (location.href = "/wishlist")}
                     >
-                      <FaStar />{" "}
-                      <span className="d-none d-sm-inline ms-1">
-                        My Wishlist
-                      </span>
+                      <FaStar />
+                      <span>My Wishlist</span>
                     </Button>
                   </div>
                 </div>
@@ -239,7 +238,7 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                   <Card.Body className="text-center">
                     <FaGift className={styles.statIcon} />
                     <h3 className={styles.statNumber}>{stats.activeGroups}</h3>
-                    <p className={styles.statLabel}>Active Groups</p>
+                    <p className={styles.statLabel}>Open Groups</p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -330,26 +329,45 @@ export default function DashboardClientPage({ session }: { session: Session }) {
             {!loadingGroups &&
               groups &&
               groups.length > 0 &&
-              groups.map((g) => (
-                <Col xs={12} sm={6} lg={4} key={g.group_id}>
+              groups.map((group) => (
+                <Col xs={12} sm={6} lg={4} key={group.group_id}>
                   <Card className={`${styles.groupCard} h-100`}>
                     <Card.Body className="d-flex flex-column">
                       <div className={styles.groupHeader}>
                         <div>
                           <h5 className={styles.groupName}>
-                            {getThemeEmoji(g.theme)} {g.group_name}
+                            {getThemeEmoji(group.theme)} {group.group_name}
                           </h5>
                           <small className="text-muted">
                             <FaUsers className="me-1" />
-                            {g.member_count ?? 0} member
-                            {(g.member_count ?? 0) !== 1 ? "s" : ""}
+                            {group.member_count ?? 0} member
+                            {(group.member_count ?? 0) !== 1 ? "s" : ""}
                           </small>
                         </div>
                         <div className="d-flex flex-column gap-1 align-items-end">
-                          <Badge bg={g.is_open ? "success" : "secondary"}>
-                            {g.is_open ? "Open" : "Closed"}
+                          <Badge bg={group.is_open ? "success" : "secondary"}>
+                            {group.is_open ? "Open" : "Closed"}
                           </Badge>
-                          {g.is_white_elephant && (
+                          <InfoTooltip
+                            content={
+                              group.is_open ? (
+                                <>
+                                  <strong>Open Group:</strong> People can still
+                                  join this group. Gift assignments (wraps) are
+                                  not yet available.
+                                </>
+                              ) : (
+                                <>
+                                  <strong>Closed Group:</strong> No one can join
+                                  anymore. You can now open your wrap to see who
+                                  you should gift!
+                                </>
+                              )
+                            }
+                            placement="top"
+                            size="sm"
+                          />
+                          {group.is_white_elephant && (
                             <Badge bg="warning" className="text-dark">
                               🎲 White Elephant
                             </Badge>
@@ -359,51 +377,60 @@ export default function DashboardClientPage({ session }: { session: Session }) {
 
                       <div className={styles.groupBody}>
                         {/* Budget */}
-                        {(g.budget_min || g.budget_max) && (
+                        {(group.budget_min || group.budget_max) && (
                           <div className="mb-2">
                             <small className="text-muted d-flex align-items-center">
                               <FaMoneyBillWave className="me-1" />
                               Budget:{" "}
-                              {g.budget_min && g.budget_max
-                                ? `${g.budget_currency || "£"}${g.budget_min} - ${g.budget_currency || "£"}${g.budget_max}`
-                                : g.budget_min
-                                ? `From ${g.budget_currency || "£"}${g.budget_min}`
-                                : `Up to ${g.budget_currency || "£"}${g.budget_max}`}
+                              {group.budget_min && group.budget_max
+                                ? `${group.budget_currency || "£"}${
+                                    group.budget_min
+                                  } - ${group.budget_currency || "£"}${
+                                    group.budget_max
+                                  }`
+                                : group.budget_min
+                                ? `From ${group.budget_currency || "£"}${
+                                    group.budget_min
+                                  }`
+                                : `Up to ${group.budget_currency || "£"}${
+                                    group.budget_max
+                                  }`}
                             </small>
                           </div>
                         )}
 
                         {/* Exchange Date */}
-                        {g.gift_exchange_deadline && (
+                        {group.gift_exchange_deadline && (
                           <div className="mb-2">
                             <small className="text-muted d-flex align-items-center">
                               <FaCalendarAlt className="me-1" />
-                              Exchange: {formatDate(g.gift_exchange_deadline)}
+                              Exchange:{" "}
+                              {formatDate(group.gift_exchange_deadline)}
                             </small>
                           </div>
                         )}
 
                         {/* Location */}
-                        {g.exchange_location && (
+                        {group.exchange_location && (
                           <div className="mb-2">
                             <small className="text-muted d-flex align-items-center">
                               <FaMapMarkerAlt className="me-1" />
-                              {g.exchange_location}
+                              {group.exchange_location}
                             </small>
                           </div>
                         )}
 
                         {/* Group Code */}
-                        {g.group_code && (
+                        {group.group_code && (
                           <div className={styles.codeSection}>
                             <span className="text-muted small">Code:</span>
                             <div className={styles.codeWrapper}>
                               <code className={styles.groupCode}>
-                                {g.group_code}
+                                {group.group_code}
                               </code>
                               <button
                                 className={styles.copyIcon}
-                                onClick={() => handleCopyCode(g.group_code)}
+                                onClick={() => handleCopyCode(group.group_code)}
                                 aria-label="Copy code"
                                 title="Copy code"
                               >
@@ -417,7 +444,7 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       <div className={styles.groupFooter}>
                         <Button
                           variant="primary"
-                          href={`/group/${g.group_id}`}
+                          href={`/groups/${group.group_id}`}
                           className={styles.viewButton}
                         >
                           View Group
