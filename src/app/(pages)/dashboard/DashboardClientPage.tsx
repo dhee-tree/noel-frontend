@@ -191,8 +191,7 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                       size="sm"
                       onClick={() => (location.href = "/wishlist")}
                     >
-                      <FaStar />
-                      <span>My Wishlist</span>
+                      <FaStar /> <span>My Wishlist</span>
                     </Button>
                   </div>
                 </div>

@@ -8,6 +8,7 @@ import {
   FaTree,
   FaUsers,
   FaGift,
+  FaStar,
   FaUserCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
@@ -53,6 +54,17 @@ export const AuthNavbar: React.FC = () => {
             >
               <FaUsers className="me-1" />
               Groups
+            </Nav.Link>
+            <Nav.Link
+              href="/wishlist"
+              className={
+                isActive("/wishlist") || pathname?.startsWith("/wishlist/")
+                  ? styles.activeLink
+                  : ""
+              }
+            >
+              <FaStar className="me-1" />
+              Wishlists
             </Nav.Link>
           </Nav>
 
