@@ -76,7 +76,7 @@ export const SelectField = ({
         : "#fff",
       color: state.isSelected ? "#fff" : "#212529",
       "&:active": {
-        backgroundColor: "#0d6efd",
+        backgroundColor: "#ffe9e9ff",
       },
     }),
   };

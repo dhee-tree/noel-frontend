@@ -4,3 +4,6 @@ export { useGroupDetail } from "./useGroupDetail";
 export { useIsGroupOwner } from "./useIsGroupOwner";
 export { useRefreshSession } from "./useRefreshSession";
 export { useUserGroups } from "./useUserGroups";
+export { useUserWishlists } from "./useUserWishlists";
+export { useWishlist } from "./useWishlist";
+export { useWishlistItems } from "./useWishlistItems";

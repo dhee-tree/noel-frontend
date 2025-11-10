@@ -19,6 +19,7 @@ export const roleBasedRoutes: Record<string, UserRole[]> = {
   "/maintenance": ["ADMIN", "MAINTAINER"],
   "/dashboard": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
   "/groups": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
+  "/wishlist": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
 };
 
 export type RoutePermissions = typeof roleBasedRoutes;
