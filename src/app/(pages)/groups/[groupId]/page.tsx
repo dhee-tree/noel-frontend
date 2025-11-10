@@ -11,12 +11,14 @@ export const metadata: Metadata = {
 export default async function GroupDetailPage({
   params,
 }: {
-  params: { groupId: string };
+  params: Promise<{ groupId: string }>;
 }) {
   const session = await auth();
   if (!session) {
     redirect("/login");
   }
 
-  return <GroupDetailClientPage groupId={params.groupId} />;
+  const { groupId } = await params;
+
+  return <GroupDetailClientPage groupId={groupId} />;
 }

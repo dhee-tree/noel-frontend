@@ -90,7 +90,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
 
     try {
       // Build request body with optional fields
-      const requestBody: Record<string, any> = {
+      const requestBody: Record<string, unknown> = {
         group_name: data.groupName.trim(),
       };
 
@@ -147,7 +147,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         );
       }
 
-      const responseData = await res.json();
       toast.success(`Successfully created "${data.groupName}"!`);
       reset();
       modalRef.current?.close();
@@ -226,7 +225,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           <Controller
             name="theme"
             control={control}
-            render={({ field }) => (
+            render={() => (
               <SelectField
                 name="theme"
                 label="Theme (Optional)"
@@ -364,9 +363,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
                 <Tooltip id="white-elephant-tooltip">
                   <strong>White Elephant Mode</strong>
                   <br />
-                  One random person will be chosen as &quot;The Snatcher&quot; 24
-                  hours before the exchange. They can steal ANY gift! Will it be
-                  you? 👀
+                  One random person will be chosen as &quot;The Snatcher&quot;
+                  24 hours before the exchange. They can steal ANY gift! Will it
+                  be you? 👀
                   <br />
                   <br />
                   <em>Traditional mode is classic Secret Santa.</em>

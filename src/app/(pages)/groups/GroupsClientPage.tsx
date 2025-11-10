@@ -99,6 +99,8 @@ export default function GroupsClientPage() {
     };
 
     fetchOwnership();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeGroups, archivedGroups, session?.accessToken]);
 
   // Filter groups based on search query

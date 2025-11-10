@@ -113,7 +113,7 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
       if (!apiUrl) throw new Error("API URL not configured");
 
       // Build request body with snake_case for backend
-      const requestBody: Record<string, any> = {
+      const requestBody: Record<string, unknown> = {
         group_name: data.groupName.trim(),
       };
 
@@ -226,7 +226,7 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
           <Controller
             name="theme"
             control={control}
-            render={({ field }) => (
+            render={() => (
               <SelectField
                 name="theme"
                 label="Theme (Optional)"

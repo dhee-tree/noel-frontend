@@ -53,7 +53,7 @@ export default function GroupDetailClientPage({
 }: GroupDetailClientPageProps) {
   const router = useRouter();
   const { group, isLoading, error, mutateGroup } = useGroupDetail(groupId);
-  const { isOwner, isLoading: isOwnerLoading } = useIsGroupOwner(groupId);
+  const { isOwner } = useIsGroupOwner(groupId);
   const { apiRequest } = useApiRequest();
   const [confirmModal, setConfirmModal] = useState<{
     show: boolean;
@@ -485,7 +485,7 @@ export default function GroupDetailClientPage({
                 <div className="mb-4 pb-4 border-bottom">
                   <h6 className="fw-bold mb-2">Leave Group</h6>
                   <p className="text-muted mb-3">
-                    Remove yourself from this group. You won't be able to rejoin
+                    Remove yourself from this group. You won&lsquo;t be able to rejoin
                     unless invited again by another member.
                   </p>
                   <Button
