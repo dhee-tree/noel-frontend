@@ -22,10 +22,7 @@ interface TriggerConfig {
 interface JoinGroupModalProps {
   show?: boolean;
   onHide?: () => void;
-
-  // Trigger configuration for self-contained mode
   trigger?: TriggerConfig;
-
   onSuccess?: () => void;
 }
 
@@ -65,7 +62,7 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
         );
       }
 
-      toast.success(`Successfully joined the group!`);
+      toast.success(`Successfully joined the group. Remember to add a wishlist!`);
       setGroupCode("");
       modalRef.current?.close();
       await mutateGroups();

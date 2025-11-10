@@ -147,6 +147,24 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
         );
       }
 
+      // Get the created group data
+      const createdGroup = await res.json();
+      const groupId = createdGroup.group_id;
+
+      // Auto-create wishlist for the new group
+      try {
+        const wishlistRes = await apiRequest("/api/wishlists/", {
+          method: "POST",
+          body: { group: groupId },
+        });
+
+        if (!wishlistRes.ok) {
+          console.error("Failed to create wishlist for new group");
+        }
+      } catch (wishlistError) {
+        console.error("Error creating wishlist:", wishlistError);
+      }
+
       toast.success(`Successfully created "${data.groupName}"!`);
       reset();
       modalRef.current?.close();
