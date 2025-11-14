@@ -54,7 +54,6 @@ type EditGroupFormData = z.infer<typeof EditGroupSchema>;
 
 interface EditGroupModalProps {
   show?: boolean;
-  onHide?: () => void;
   trigger?: TriggerConfig;
   onSuccess?: () => void;
   group: Group;
@@ -62,7 +61,6 @@ interface EditGroupModalProps {
 
 export const EditGroupModal: React.FC<EditGroupModalProps> = ({
   show,
-  onHide,
   trigger,
   onSuccess,
   group,
@@ -167,7 +165,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
 
   const handleClose = () => {
     modalRef.current?.close();
-    onHide?.();
   };
 
   return (

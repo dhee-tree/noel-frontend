@@ -28,12 +28,7 @@ interface TriggerConfig {
 
 interface CreateGroupModalProps {
   show?: boolean;
-  onHide?: () => void;
-
-  // Trigger configuration for self-contained mode
   trigger?: TriggerConfig;
-
-  onSuccess?: () => void;
 }
 
 const CreateGroupSchema = z.object({
@@ -66,9 +61,7 @@ type CreateGroupForm = z.infer<typeof CreateGroupSchema>;
 
 export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   show,
-  onHide,
   trigger,
-  onSuccess,
 }) => {
   const [apiError, setApiError] = useState("");
   const modalRef = useRef<BaseModalRef>(null);
@@ -169,7 +162,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       reset();
       modalRef.current?.close();
       await mutateGroups();
-      onSuccess?.();
     } catch (err: unknown) {
       const message =
         err instanceof Error
@@ -183,7 +175,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     reset();
     setApiError("");
     modalRef.current?.close();
-    onHide?.();
   };
 
   return (
@@ -224,6 +215,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             autoFocus
             disabled={isSubmitting}
             maxLength={100}
+            className="mb-3"
           />
 
           <TextAreaField

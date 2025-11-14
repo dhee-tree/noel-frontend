@@ -21,16 +21,12 @@ interface TriggerConfig {
 
 interface JoinGroupModalProps {
   show?: boolean;
-  onHide?: () => void;
   trigger?: TriggerConfig;
-  onSuccess?: () => void;
 }
 
 export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
   show,
-  onHide,
   trigger,
-  onSuccess,
 }) => {
   const [groupCode, setGroupCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -62,11 +58,12 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
         );
       }
 
-      toast.success(`Successfully joined the group. Remember to add a wishlist!`);
+      toast.success(
+        `Successfully joined the group. Remember to add a wishlist!`
+      );
       setGroupCode("");
       modalRef.current?.close();
       await mutateGroups();
-      onSuccess?.();
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Could not join group. Try again.";
@@ -79,7 +76,6 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
   const handleClose = () => {
     setGroupCode("");
     modalRef.current?.close();
-    onHide?.();
   };
 
   return (
