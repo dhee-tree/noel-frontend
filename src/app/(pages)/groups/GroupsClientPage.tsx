@@ -360,16 +360,6 @@ export default function GroupsClientPage() {
                         </Col>
                         <Col md={4} className="text-md-end mt-2 mt-md-0">
                           <div className={styles.actionButtons}>
-                            {/* <Button
-                              size="sm"
-                              className={styles.viewButton}
-                              onClick={() =>
-                                router.push(`/groups/${group.group_id}`)
-                              }
-                              title="View group"
-                            >
-                              <FaEye />
-                            </Button> */}
                             {ownershipMap.get(group.group_id) && (
                               <Button
                                 variant={

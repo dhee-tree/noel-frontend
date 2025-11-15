@@ -1,13 +1,25 @@
 .container {
-  padding: 2rem 0;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem 1.5rem;
+  }
 }
 
 .pageTitle {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--bs-dark);
   display: flex;
   align-items: center;
+}
+
+@media (min-width: 768px) {
+  .pageTitle {
+    font-size: 2rem;
+  }
 }
 
 .emptyState {

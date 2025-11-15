@@ -94,13 +94,13 @@ export default function WishlistsClientPage() {
       {/* Header */}
       <Row className="mb-4">
         <Col>
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
             <div>
               <h1 className={styles.pageTitle}>
                 <FaGift className="me-2" />
                 My Wishlists
               </h1>
-              <p className="text-muted">
+              <p className="text-muted mb-0">
                 Manage your wishlists for all your Secret Santa groups.
               </p>
             </div>
@@ -110,6 +110,7 @@ export default function WishlistsClientPage() {
                 label: "Create Wishlist",
                 icon: <FaPlus />,
                 variant: "dark",
+                className: "flex-shrink-0",
               }}
               groups={allGroups}
             />
@@ -157,8 +158,8 @@ export default function WishlistsClientPage() {
                   key={wishlist.wishlist_id}
                   className={styles.wishlistItem}
                 >
-                  <Row className="align-items-center">
-                    <Col md={7}>
+                  <Row className="align-items-start align-items-md-center">
+                    <Col xs={12} md={7}>
                       <a
                         href={`/wishlist/${wishlist.wishlist_id}`}
                         onClick={(e) => {
@@ -169,12 +170,14 @@ export default function WishlistsClientPage() {
                         style={{ color: "inherit", cursor: "pointer" }}
                         aria-label={`Open ${wishlist.name}`}
                       >
-                        <div className="d-flex align-items-start gap-3">
+                        <div className="d-flex align-items-start gap-2 gap-md-3">
                           <div className={styles.wishlistIcon}>
                             <FaGift />
                           </div>
-                          <div>
-                            <h5 className={styles.wishlistName}>
+                          <div className="flex-grow-1 overflow-hidden">
+                            <h5
+                              className={`${styles.wishlistName} text-truncate`}
+                            >
                               {wishlist.name}
                             </h5>
                             <div className="text-muted small">
@@ -186,7 +189,7 @@ export default function WishlistsClientPage() {
                         </div>
                       </a>
                     </Col>
-                    <Col md={5} className="text-md-end mt-2 mt-md-0">
+                    <Col xs={12} md={5} className="text-md-end mt-2 mt-md-0">
                       <div className="d-flex gap-2 justify-content-md-end">
                         <Button
                           variant="outline-danger"
@@ -194,7 +197,7 @@ export default function WishlistsClientPage() {
                           onClick={() =>
                             handleDeleteWishlist(
                               wishlist.wishlist_id,
-                              wishlist.name,
+                              wishlist.name
                             )
                           }
                         >

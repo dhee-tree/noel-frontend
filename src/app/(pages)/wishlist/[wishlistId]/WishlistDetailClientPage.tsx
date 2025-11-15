@@ -241,8 +241,8 @@ export default function WishlistDetailClientPage({
               {items.map((item) => (
                 <ListGroup.Item key={item.item_id} className={styles.itemCard}>
                   <Row className="align-items-start">
-                    <Col md={8}>
-                      <div className="d-flex align-items-start gap-2 mb-2">
+                    <Col xs={12} md={8}>
+                      <div className="d-flex flex-wrap align-items-start gap-2 mb-2">
                         <h5 className={styles.itemName}>{item.name}</h5>
                         {item.priority && (
                           <Badge bg={getPriorityColor(item.priority)}>
@@ -250,14 +250,10 @@ export default function WishlistDetailClientPage({
                           </Badge>
                         )}
                         {!item.is_public && (
-                          <Badge bg="secondary" className="ms-2">
-                            Private
-                          </Badge>
+                          <Badge bg="secondary">Private</Badge>
                         )}
                         {item.is_purchased && (
-                          <Badge bg="success" className="ms-2">
-                            Purchased
-                          </Badge>
+                          <Badge bg="success">Purchased</Badge>
                         )}
                       </div>
                       {item.description && (
@@ -287,13 +283,18 @@ export default function WishlistDetailClientPage({
                         )}
                       </div>
                     </Col>
-                    <Col md={4} className="text-md-end mt-3 mt-md-0">
+                    <Col
+                      xs={12}
+                      md={4}
+                      className="text-start text-md-end mt-3 mt-md-0"
+                    >
                       <div className={styles.actionButtons}>
                         <ViewWishlistItemModal
                           trigger={{
                             type: "button",
                             variant: "outline-dark",
                             icon: <FaEye />,
+                            size: "sm",
                           }}
                           wishlistId={wishlistId}
                           itemId={item.item_id}
@@ -303,6 +304,7 @@ export default function WishlistDetailClientPage({
                             type: "button",
                             variant: "outline-primary",
                             icon: <FaEdit />,
+                            size: "sm",
                           }}
                           wishlistId={wishlistId}
                           itemId={item.item_id}
