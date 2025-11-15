@@ -152,10 +152,6 @@ export default function WishlistsClientPage() {
         <Card>
           <ListGroup variant="flush">
             {wishlists.map((wishlist) => {
-              const group = allGroups.find(
-                (g) => g.group_id === wishlist.group
-              );
-
               return (
                 <ListGroup.Item
                   key={wishlist.wishlist_id}
@@ -171,9 +167,7 @@ export default function WishlistsClientPage() {
                         }}
                         className="d-block text-decoration-none"
                         style={{ color: "inherit", cursor: "pointer" }}
-                        aria-label={`Open ${
-                          group?.group_name || "Unknown Group"
-                        } Wishlist`}
+                        aria-label={`Open ${wishlist.name}`}
                       >
                         <div className="d-flex align-items-start gap-3">
                           <div className={styles.wishlistIcon}>
@@ -181,7 +175,7 @@ export default function WishlistsClientPage() {
                           </div>
                           <div>
                             <h5 className={styles.wishlistName}>
-                              {group?.group_name || "Unknown Group"} Wishlist
+                              {wishlist.name}
                             </h5>
                             <div className="text-muted small">
                               <span>
@@ -200,9 +194,7 @@ export default function WishlistsClientPage() {
                           onClick={() =>
                             handleDeleteWishlist(
                               wishlist.wishlist_id,
-                              group?.group_name
-                                ? `${group.group_name} Wishlist`
-                                : "Unknown Group Wishlist"
+                              wishlist.name,
                             )
                           }
                         >

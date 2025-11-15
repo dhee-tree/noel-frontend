@@ -2,9 +2,10 @@ export type WishlistPriority = "low" | "medium" | "high";
 
 export interface Wishlist {
   wishlist_id: string;
-  user_profile: number; // user_id
-  group: string; // group_id
-  group_name?: string; // Populated from backend
+  user_profile: number;
+  name: string;
+  group: string;
+  group_name?: string;
   date_created: string;
   date_updated: string;
 }

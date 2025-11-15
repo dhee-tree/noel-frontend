@@ -189,9 +189,7 @@ export default function WishlistDetailClientPage({
                 <div>
                   <h1 className={styles.wishlistTitle}>
                     <FaGift className="me-2" />
-                    {wishlist.group_name
-                      ? `${wishlist.group_name} Wishlist`
-                      : "My Wishlist"}
+                    {wishlist.name}
                   </h1>
                   <p className="text-muted mb-0">
                     Add items you&apos;d like to receive for this Secret Santa
