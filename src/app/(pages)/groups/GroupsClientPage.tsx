@@ -298,21 +298,34 @@ export default function GroupsClientPage() {
                     >
                       <Row className="align-items-center">
                         <Col md={5}>
-                          <h5 className={styles.groupName}>
-                            {group.group_name}
-                          </h5>
-                          <div className="text-muted small">
-                            <FaUsers className="me-1" />
-                            {group.member_count || 0} members
-                            {group.group_code && (
-                              <>
-                                {" • Code: "}
-                                <code className={styles.codeText}>
-                                  {group.group_code}
-                                </code>
-                              </>
-                            )}
-                          </div>
+                          <a
+                            href={`/groups/${group.group_id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              router.push(`/groups/${group.group_id}`);
+                            }}
+                            className="d-block text-decoration-none"
+                            style={{ color: "inherit", cursor: "pointer" }}
+                            aria-label={`Open ${
+                              group?.group_name || "Unknown Group"
+                            } Wishlist`}
+                          >
+                            <h5 className={styles.groupName}>
+                              {group.group_name}
+                            </h5>
+                            <div className="text-muted small">
+                              <FaUsers className="me-1" />
+                              {group.member_count || 0} members
+                              {group.group_code && (
+                                <>
+                                  {" • Code: "}
+                                  <code className={styles.codeText}>
+                                    {group.group_code}
+                                  </code>
+                                </>
+                              )}
+                            </div>
+                          </a>
                         </Col>
                         <Col md={3}>
                           <div className="d-flex gap-2 flex-wrap align-items-center">
@@ -347,7 +360,7 @@ export default function GroupsClientPage() {
                         </Col>
                         <Col md={4} className="text-md-end mt-2 mt-md-0">
                           <div className={styles.actionButtons}>
-                            <Button
+                            {/* <Button
                               size="sm"
                               className={styles.viewButton}
                               onClick={() =>
@@ -356,23 +369,7 @@ export default function GroupsClientPage() {
                               title="View group"
                             >
                               <FaEye />
-                            </Button>
-                            {group.group_code && (
-                              <Button
-                                size="sm"
-                                className={styles.copyButton}
-                                onClick={() =>
-                                  handleCopyCode(
-                                    group.group_code,
-                                    group.group_name
-                                  )
-                                }
-                                aria-label="Copy group code"
-                                title="Copy code"
-                              >
-                                <FaCopy />
-                              </Button>
-                            )}
+                            </Button> */}
                             {ownershipMap.get(group.group_id) && (
                               <Button
                                 variant={
@@ -395,6 +392,23 @@ export default function GroupsClientPage() {
                                 }
                               >
                                 {group.is_open ? <FaLock /> : <FaUnlock />}
+                              </Button>
+                            )}
+
+                            {group.group_code && (
+                              <Button
+                                size="sm"
+                                className={styles.copyButton}
+                                onClick={() =>
+                                  handleCopyCode(
+                                    group.group_code,
+                                    group.group_name
+                                  )
+                                }
+                                aria-label="Copy group code"
+                                title="Copy code"
+                              >
+                                <FaCopy />
                               </Button>
                             )}
 

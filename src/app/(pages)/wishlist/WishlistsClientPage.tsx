@@ -8,16 +8,8 @@ import {
   Button,
   Spinner,
   ListGroup,
-  Dropdown,
 } from "react-bootstrap";
-import {
-  FaPlus,
-  FaGift,
-  FaArrowRight,
-  FaList,
-  FaEllipsisV,
-  FaTrash,
-} from "react-icons/fa";
+import { FaPlus, FaGift, FaList, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useUserWishlists, useUserGroups, useApiRequest } from "@/hooks";
 import { CreateWishlistModal, ConfirmModal } from "@/components/modals";
@@ -120,7 +112,6 @@ export default function WishlistsClientPage() {
                 variant: "dark",
               }}
               groups={allGroups}
-              onSuccess={mutateWishlists}
             />
           </div>
         </Col>
@@ -144,7 +135,6 @@ export default function WishlistsClientPage() {
                   variant: "dark",
                 }}
                 groups={allGroups}
-                onSuccess={mutateWishlists}
               />
             ) : (
               <div>
@@ -173,60 +163,51 @@ export default function WishlistsClientPage() {
                 >
                   <Row className="align-items-center">
                     <Col md={7}>
-                      <div className="d-flex align-items-start gap-3">
-                        <div className={styles.wishlistIcon}>
-                          <FaGift />
-                        </div>
-                        <div>
-                          <h5 className={styles.wishlistName}>
-                            {group?.group_name || "Unknown Group"} Wishlist
-                          </h5>
-                          <div className="text-muted small">
-                            <span>
-                              Updated {formatDate(wishlist.date_updated)}
-                            </span>
+                      <a
+                        href={`/wishlist/${wishlist.wishlist_id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/wishlist/${wishlist.wishlist_id}`);
+                        }}
+                        className="d-block text-decoration-none"
+                        style={{ color: "inherit", cursor: "pointer" }}
+                        aria-label={`Open ${
+                          group?.group_name || "Unknown Group"
+                        } Wishlist`}
+                      >
+                        <div className="d-flex align-items-start gap-3">
+                          <div className={styles.wishlistIcon}>
+                            <FaGift />
+                          </div>
+                          <div>
+                            <h5 className={styles.wishlistName}>
+                              {group?.group_name || "Unknown Group"} Wishlist
+                            </h5>
+                            <div className="text-muted small">
+                              <span>
+                                Updated {formatDate(wishlist.date_updated)}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     </Col>
                     <Col md={5} className="text-md-end mt-2 mt-md-0">
                       <div className="d-flex gap-2 justify-content-md-end">
                         <Button
-                          variant="brand"
+                          variant="outline-danger"
                           size="sm"
                           onClick={() =>
-                            router.push(`/wishlist/${wishlist.wishlist_id}`)
+                            handleDeleteWishlist(
+                              wishlist.wishlist_id,
+                              group?.group_name
+                                ? `${group.group_name} Wishlist`
+                                : "Unknown Group Wishlist"
+                            )
                           }
                         >
-                          View Items
-                          <FaArrowRight className="ms-2" />
+                          <FaTrash />
                         </Button>
-                        <Dropdown align="end">
-                          <Dropdown.Toggle
-                            variant="outline-secondary"
-                            size="sm"
-                            id={`dropdown-${wishlist.wishlist_id}`}
-                          >
-                            <FaEllipsisV />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            {/* <Dropdown.Divider /> */}
-                            <Dropdown.Item
-                              className="text-danger"
-                              onClick={() =>
-                                handleDeleteWishlist(
-                                  wishlist.wishlist_id,
-                                  group?.group_name
-                                    ? `${group.group_name} Wishlist`
-                                    : "Unknown Group Wishlist"
-                                )
-                              }
-                            >
-                              <FaTrash className="me-2" />
-                              Delete Wishlist
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
                       </div>
                     </Col>
                   </Row>
