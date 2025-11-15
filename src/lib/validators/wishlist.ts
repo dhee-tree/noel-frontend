@@ -5,17 +5,12 @@ import { z } from "zod";
  */
 export const createWishlistSchema = z.object({
   group: z.string().uuid("Please select a valid group"),
-  // Note: The wishlist name will be auto-generated as "{Group Name} Wishlist"
-  // but we could add a custom name field here if needed later
 });
 
 /**
  * Schema for editing a wishlist
  */
-export const editWishlistSchema = z.object({
-  // Add fields here if we allow editing wishlist properties
-  // For now, wishlists are auto-named based on group
-});
+export const editWishlistSchema = z.object({});
 
 /**
  * Schema for creating/editing a wishlist item
@@ -43,14 +38,13 @@ export const wishlistItemSchema = z.object({
     .or(z.literal("")),
   price_estimate: z
     .number()
-    .min(0, "Price must be a positive number")
     .max(999999.99, "Price is too large")
     .optional()
     .nullable(),
   priority: z.enum(["low", "medium", "high"]).optional().nullable(),
   is_public: z.boolean().default(true),
+  is_purchased: z.boolean().default(false),
 });
 
 export type CreateWishlistInput = z.infer<typeof createWishlistSchema>;
 export type EditWishlistInput = z.infer<typeof editWishlistSchema>;
-export type WishlistItemInput = z.infer<typeof wishlistItemSchema>;

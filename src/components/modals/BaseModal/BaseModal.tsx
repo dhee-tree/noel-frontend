@@ -37,14 +37,9 @@ interface TriggerConfig {
 }
 
 interface BaseModalProps {
-  // Modal control - can be controlled externally or self-contained
   show?: boolean;
   onHide?: () => void;
-
-  // Trigger configuration for self-contained mode
   trigger?: TriggerConfig;
-
-  // Modal content
   title: string;
   children: React.ReactNode;
   size?: "sm" | "lg" | "xl";
