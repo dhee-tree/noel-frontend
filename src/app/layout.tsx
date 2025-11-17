@@ -27,6 +27,23 @@ export const metadata: Metadata = {
   description:
     "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
   keywords: "Noel, Secret Santa, gift exchange, holiday cheer",
+  openGraph: {
+    title: "Noel - Secret Santa Made Magical",
+    description:
+      "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
+    url: process.env.NEXT_PUBLIC_BASE_URL,
+    siteName: "Noel",
+    locale: "en-UK",
+    type: "website",
+    images: [
+      {
+        url: "/images/NOEL Logo.png",
+        width: 800,
+        height: 600,
+        alt: "Noel Logo",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({
@@ -35,7 +52,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -47,9 +64,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <AuthProvider session={session}>
-          <InactivityProvider>
-            {children}
-          </InactivityProvider>
+          <InactivityProvider>{children}</InactivityProvider>
         </AuthProvider>
       </body>
     </html>
