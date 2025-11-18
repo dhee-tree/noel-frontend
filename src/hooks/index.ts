@@ -2,6 +2,7 @@ export { useApiRequest } from "./useApiRequest";
 export { useCurrentUser } from "./useCurrentUser";
 export { useGroupDetail } from "./useGroupDetail";
 export { useIsGroupOwner } from "./useIsGroupOwner";
+export { useProfile } from "./useProfile";
 export { useRefreshSession } from "./useRefreshSession";
 export { useUserGroups } from "./useUserGroups";
 export { useUserWishlists } from "./useUserWishlists";

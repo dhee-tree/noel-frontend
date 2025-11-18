@@ -44,7 +44,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     return {
       ...token,
       accessToken: refreshedTokens.access,
-      accessTokenExpires: Date.now() + 15 * 60 * 1000,
+      accessTokenExpires: Date.now() + 15 * 60 * 1000, // 15 minutes
     };
   } catch (error) {
     console.error("Error refreshing access token:", error);

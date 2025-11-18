@@ -1,0 +1,29 @@
+.avatarWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verifiedBadge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.infoItem {
+    padding: 0.75rem 0;
+}
+
+.infoItem span {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.infoItem p {
+    font-size: 1rem;
+}
