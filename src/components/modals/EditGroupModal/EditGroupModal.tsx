@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import {
   BaseModal,
   BaseModalRef,
@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
-import { FaQuestionCircle } from "react-icons/fa";
 import { Group } from "@/hooks/useUserGroups";
 
 const EditGroupSchema = z.object({

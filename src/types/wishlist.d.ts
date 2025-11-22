@@ -8,6 +8,7 @@ export interface Wishlist {
   group_name?: string;
   date_created: string;
   date_updated: string;
+  items: WishlistItem[];
 }
 
 export interface WishlistItem {
@@ -23,8 +24,4 @@ export interface WishlistItem {
   is_purchased: boolean;
   date_created: string;
   date_updated: string;
-}
-
-export interface WishlistWithItems extends Wishlist {
-  items: WishlistItem[];
 }

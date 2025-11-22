@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { Form, Alert, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Form, Alert } from "react-bootstrap";
 import {
   BaseModal,
   BaseModalRef,
@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { SelectField, SelectOption } from "@/components/forms/SelectField";
-import { FaQuestionCircle } from "react-icons/fa";
 
 interface TriggerConfig {
   type: "button" | "link";
