@@ -1,16 +1,11 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   Container,
-  Row,
-  Col,
-  Card,
   Button,
   Badge,
   Spinner,
   Alert,
-  ListGroup,
 } from "react-bootstrap";
 import {
   FaArrowLeft,
@@ -18,8 +13,10 @@ import {
   FaGift,
   FaEdit,
   FaTrash,
-  FaExternalLinkAlt,
+  FaStore,
   FaEye,
+  FaLock,
+  FaCheckCircle,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useWishlist, useWishlistItems, useApiRequest } from "@/hooks";
@@ -35,6 +32,11 @@ import styles from "./WishlistDetailClientPage.module.css";
 interface WishlistDetailClientPageProps {
   wishlistId: string;
 }
+
+export const getPriorityLabel = (priority?: string | null) => {
+  if (!priority) return "No Priority";
+  return priority.charAt(0).toUpperCase() + priority.slice(1);
+};
 
 export default function WishlistDetailClientPage({
   wishlistId,
@@ -73,11 +75,6 @@ export default function WishlistDetailClientPage({
       default:
         return "secondary";
     }
-  };
-
-  const getPriorityLabel = (priority?: string | null) => {
-    if (!priority) return "No Priority";
-    return priority.charAt(0).toUpperCase() + priority.slice(1);
   };
 
   const handleDeleteItem = (itemId: string, itemName: string) => {
@@ -168,165 +165,148 @@ export default function WishlistDetailClientPage({
   return (
     <Container className={styles.container}>
       {/* Header */}
-      <Row className="mb-4">
-        <Col>
-          <Button
-            variant="link"
-            className={styles.backButton}
-            onClick={() => router.push("/wishlist")}
-          >
-            <FaArrowLeft className="me-2" />
-            Back to Wishlists
-          </Button>
-        </Col>
-      </Row>
+      <div className="mb-4">
+        <Button
+          variant="link"
+          className={styles.backButton}
+          onClick={() => router.push("/wishlist")}
+        >
+          <FaArrowLeft className="me-2" />
+          Back to Wishlists
+        </Button>
+        <div className={styles.headerCard}>
+          <div className={styles.headerContent}>
+            <div>
+              <h1 className={styles.wishlistTitle}>
+                <FaGift className="me-3 text-primary" />
+                {wishlist.name}
+              </h1>
+              <p className={styles.wishlistSubtitle}>
+                Add items you&apos;d like to receive for this Secret Santa
+                exchange.
+              </p>
+            </div>
+            <div className="d-flex gap-2">
+              <AddWishlistItemModal
+                trigger={{
+                  type: "button",
+                  label: "Add Item",
+                  variant: "dark",
+                  className: "d-flex align-items-center gap-2 px-4 py-2",
+                  icon: <FaPlus />,
+                }}
+                wishlistId={wishlistId}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Row className="mb-4">
-        <Col>
-          <Card className={styles.headerCard}>
-            <Card.Body>
-              <div className={styles.headerContent}>
-                <div>
-                  <h1 className={styles.wishlistTitle}>
-                    <FaGift className="me-2" />
-                    {wishlist.name}
-                  </h1>
-                  <p className="text-muted mb-0">
-                    Add items you&apos;d like to receive for this Secret Santa
-                    exchange
-                  </p>
+      {/* Items Grid */}
+      {items.length === 0 ? (
+        <div className={styles.emptyState}>
+          <FaGift size={48} className="text-muted mb-3 opacity-50" />
+          <h4 className="text-muted">Your wishlist is empty</h4>
+          <p className="text-muted mb-4">
+            Add a few options to help your Secret Santa pick the perfect gift!
+          </p>
+          <AddWishlistItemModal
+            trigger={{
+              type: "button",
+              label: "Add Your First Item",
+              variant: "outline-primary",
+              icon: <FaPlus />,
+            }}
+            wishlistId={wishlistId}
+          />
+        </div>
+      ) : (
+        <div className={styles.itemsGrid}>
+          {items.map((item) => (
+            <div key={item.item_id} className={styles.wishlistCard}>
+              {/* Top Section: Title & Badges */}
+              <div className={styles.cardHeader}>
+                <h5 className={styles.itemName}>{item.name}</h5>
+              </div>
+
+              <div className={styles.badges}>
+                <Badge
+                  bg={getPriorityColor(item.priority)}
+                  className={styles.pillBadge}
+                >
+                  {getPriorityLabel(item.priority)}
+                </Badge>
+                {!item.is_public && (
+                  <Badge bg="secondary" className={styles.pillBadge}>
+                    <FaLock size={10} className="me-1" /> Private
+                  </Badge>
+                )}
+                {item.is_purchased && (
+                  <Badge bg="success" className={styles.pillBadge}>
+                    <FaCheckCircle size={10} className="me-1" /> Purchased
+                  </Badge>
+                )}
+              </div>
+
+              {/* Middle: Description */}
+              <p className={styles.itemDescription}>
+                {item.description || "No description provided."}
+              </p>
+
+              {/* Bottom: Footer with Price & Actions */}
+              <div className={styles.cardFooter}>
+                <div className={styles.metaInfo}>
+                  {item.price_estimate ? (
+                    <div className={styles.priceTag}>
+                      £{Number(item.price_estimate).toFixed(2)}
+                    </div>
+                  ) : (
+                    <div className="text-muted small">No price</div>
+                  )}
+                  {item.store && (
+                    <div className={styles.storeName}>
+                      <FaStore /> {item.store}
+                    </div>
+                  )}
                 </div>
-                <div className="d-flex gap-2">
-                  <AddWishlistItemModal
+
+                <div className={styles.actionButtons}>
+                  <ViewWishlistItemModal
                     trigger={{
                       type: "button",
-                      label: "Add Item",
-                      variant: "dark",
-                      icon: <FaPlus />,
+                      variant: "light",
+                      icon: <FaEye color="#4a5568" />,
+                      size: "sm",
+                      className: styles.iconBtn,
                     }}
                     wishlistId={wishlistId}
+                    itemId={item.item_id}
                   />
+                  <EditWishlistItemModal
+                    trigger={{
+                      type: "button",
+                      variant: "light",
+                      icon: <FaEdit color="#3182ce" />,
+                      size: "sm",
+                      className: styles.iconBtn,
+                    }}
+                    wishlistId={wishlistId}
+                    itemId={item.item_id}
+                  />
+                  <Button
+                    variant="light"
+                    size="sm"
+                    className={styles.iconBtn}
+                    onClick={() => handleDeleteItem(item.item_id, item.name)}
+                  >
+                    <FaTrash color="#e53e3e" />
+                  </Button>
                 </div>
               </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Items List */}
-      <Row>
-        <Col>
-          {items.length === 0 ? (
-            <Card className={styles.emptyState}>
-              <Card.Body className="text-center py-5">
-                <FaGift size={64} className="text-muted mb-3" />
-                <h3>No Items Yet</h3>
-                <p className="text-muted mb-4">
-                  Start building your wishlist by adding items you&apos;d like
-                  to receive!
-                </p>
-                <AddWishlistItemModal
-                  trigger={{
-                    type: "button",
-                    label: "Add Your First Item",
-                    variant: "dark",
-                    icon: <FaPlus />,
-                  }}
-                  wishlistId={wishlistId}
-                />
-              </Card.Body>
-            </Card>
-          ) : (
-            <ListGroup>
-              {items.map((item) => (
-                <ListGroup.Item key={item.item_id} className={styles.itemCard}>
-                  <Row className="align-items-start">
-                    <Col xs={12} md={8}>
-                      <div className="d-flex flex-wrap align-items-start gap-2 mb-2">
-                        <h5 className={styles.itemName}>{item.name}</h5>
-                        {item.priority && (
-                          <Badge bg={getPriorityColor(item.priority)}>
-                            {getPriorityLabel(item.priority)} Priority
-                          </Badge>
-                        )}
-                        {!item.is_public && (
-                          <Badge bg="secondary">Private</Badge>
-                        )}
-                        {item.is_purchased && (
-                          <Badge bg="success">Purchased</Badge>
-                        )}
-                      </div>
-                      {item.description && (
-                        <p className={styles.itemDescription}>
-                          {item.description}
-                        </p>
-                      )}
-                      <div className="d-flex flex-wrap gap-2 align-items-center">
-                        {item.price_estimate && (
-                          <span className={styles.price}>
-                            £{Number(item.price_estimate).toFixed(2)}
-                          </span>
-                        )}
-                        {item.store && (
-                          <span className={styles.store}>{item.store}</span>
-                        )}
-                        {item.link && (
-                          <a
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.link}
-                          >
-                            <FaExternalLinkAlt className="me-1" />
-                            View Item
-                          </a>
-                        )}
-                      </div>
-                    </Col>
-                    <Col
-                      xs={12}
-                      md={4}
-                      className="text-start text-md-end mt-3 mt-md-0"
-                    >
-                      <div className={styles.actionButtons}>
-                        <ViewWishlistItemModal
-                          trigger={{
-                            type: "button",
-                            variant: "outline-dark",
-                            icon: <FaEye />,
-                            size: "sm",
-                          }}
-                          wishlistId={wishlistId}
-                          itemId={item.item_id}
-                        />
-                        <EditWishlistItemModal
-                          trigger={{
-                            type: "button",
-                            variant: "outline-primary",
-                            icon: <FaEdit />,
-                            size: "sm",
-                          }}
-                          wishlistId={wishlistId}
-                          itemId={item.item_id}
-                        />
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() =>
-                            handleDeleteItem(item.item_id, item.name)
-                          }
-                        >
-                          <FaTrash />
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          )}
-        </Col>
-      </Row>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Delete Wishlist Confirmation Modal */}
       <ConfirmModal

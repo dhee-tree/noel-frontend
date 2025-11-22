@@ -1,22 +1,24 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { Alert, Badge, Spinner, Row, Col } from "react-bootstrap";
+import { Alert, Badge, Spinner } from "react-bootstrap";
 import {
   FaEye,
   FaEyeSlash,
   FaExternalLinkAlt,
   FaStore,
   FaTag,
+  FaCheckCircle,
 } from "react-icons/fa";
 import {
   BaseModal,
   BaseModalRef,
 } from "@/components/modals/BaseModal/BaseModal";
-import styles from "./ViewWishlistItemModal.module.css";
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
 import { swrFetcher } from "@/lib/swr-fetcher";
 import { WishlistItem } from "@/types/wishlist.d";
+import { getPriorityLabel } from "@/app/(pages)/wishlist/[wishlistId]/WishlistDetailClientPage";
+import styles from "./ViewWishlistItemModal.module.css";
 
 interface TriggerConfig {
   type: "button";
@@ -80,17 +82,12 @@ export const ViewWishlistItemModal: React.FC<ViewWishlistItemModalProps> = ({
     }
   };
 
-  const getPriorityLabel = (priority?: string | null) => {
-    if (!priority) return "No Priority";
-    return priority.charAt(0).toUpperCase() + priority.slice(1);
-  };
-
   return (
     <BaseModal
       ref={modalRef}
       onHide={handleClose}
       trigger={trigger}
-      title="Wishlist Item Details"
+      title="Item Details"
       size="lg"
       onEntering={() => setFetchData(true)}
       footerButtons={[
@@ -108,94 +105,91 @@ export const ViewWishlistItemModal: React.FC<ViewWishlistItemModalProps> = ({
       ) : isLoading || !itemData ? (
         <div className="text-center py-5">
           <Spinner animation="border" variant="primary" />
-          <p className="mt-3 text-muted">Fetching wishlist item details...</p>
+          <p className="mt-3 text-muted">Fetching details...</p>
         </div>
       ) : (
         <div className={styles.itemDetails}>
-          {/* Item Name */}
-          <div className="mb-4">
-            <h4 className="mb-2">{itemData.name}</h4>
-            <div className="d-flex gap-2 align-items-center">
-              <Badge bg={getPriorityColor(itemData.priority)}>
-                {getPriorityLabel(itemData.priority)} Priority
+          {/* Header Section: Name & Badges */}
+          <div className={styles.headerSection}>
+            <h2 className={styles.itemName}>{itemData.name}</h2>
+            <div className={styles.badgeGroup}>
+              <Badge
+                bg={getPriorityColor(itemData.priority)}
+                className={styles.pillBadge}
+              >
+                {getPriorityLabel(itemData.priority)}
               </Badge>
               {itemData.is_public ? (
-                <Badge bg="success" className="d-flex align-items-center gap-1">
-                  <FaEye size={12} />
-                  Public
+                <Badge bg="success" className={styles.pillBadge}>
+                  <FaEye /> Public
                 </Badge>
               ) : (
-                <Badge
-                  bg="secondary"
-                  className="d-flex align-items-center gap-1"
-                >
-                  <FaEyeSlash size={12} />
-                  Private
+                <Badge bg="secondary" className={styles.pillBadge}>
+                  <FaEyeSlash /> Private
                 </Badge>
               )}
-              {itemData.is_purchased && <Badge bg="success">Purchased</Badge>}
+              {itemData.is_purchased && (
+                <Badge bg="success" className={styles.pillBadge}>
+                  <FaCheckCircle /> Purchased
+                </Badge>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          {itemData.description && (
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Description</h6>
-              <p className={styles.description}>{itemData.description}</p>
-            </div>
-          )}
-
-          <Row>
-            {/* Price Estimate */}
-            {itemData.price_estimate && (
-              <Col md={6} className="mb-4">
-                <h6 className="text-muted mb-2">
-                  <FaTag className="me-2" />
-                  Price Estimate
-                </h6>
-                <p className={styles.priceEstimate}>
-                  £{Number(itemData.price_estimate).toFixed(2)}
-                </p>
-              </Col>
+          <div className={styles.contentGrid}>
+            {/* Description Box */}
+            {itemData.description && (
+              <div className={styles.descriptionBox}>
+                <span className={styles.sectionLabel}>Description</span>
+                <p className={styles.descriptionText}>{itemData.description}</p>
+              </div>
             )}
 
-            {/* Store */}
-            {itemData.store && (
-              <Col md={6} className="mb-4">
-                <h6 className="text-muted mb-2">
-                  <FaStore className="me-2" />
-                  Store
-                </h6>
-                <p>{itemData.store}</p>
-              </Col>
-            )}
-          </Row>
+            {/* Meta Info Row (Price & Store) */}
+            {(itemData.price_estimate || itemData.store) && (
+              <div className={styles.metaRow}>
+                {itemData.price_estimate && (
+                  <div className={styles.metaBlock}>
+                    <span className={styles.sectionLabel}>
+                      <FaTag className="me-1" /> Price Estimate
+                    </span>
+                    <div className={styles.priceValue}>
+                      £{Number(itemData.price_estimate).toFixed(2)}
+                    </div>
+                  </div>
+                )}
 
-          {itemData.link && (
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Product Link</h6>
+                {itemData.store && (
+                  <div className={styles.metaBlock}>
+                    <span className={styles.sectionLabel}>
+                      <FaStore className="me-1" /> Store
+                    </span>
+                    <div className={styles.storeValue}>{itemData.store}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Product Link Button */}
+            {itemData.link && (
               <a
                 href={itemData.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${styles.productLink} d-inline-flex align-items-center gap-2`}
+                className={styles.actionButton}
               >
-                <FaExternalLinkAlt size={14} />
-                View Product
+                View Product Website <FaExternalLinkAlt />
               </a>
-            </div>
-          )}
+            )}
 
-          {!itemData.is_public && (
-            <Alert variant={"warning"}>
-              <small>
-                <>
-                  <FaEyeSlash className="me-2" />
-                  This item is private and only visible to you.
-                </>
-              </small>
-            </Alert>
-          )}
+            {/* Private Item Warning */}
+            {!itemData.is_public && (
+              <Alert variant="warning" className="mt-2 mb-0">
+                <FaEyeSlash className="me-2" />
+                This item is private. Only you can see it.
+              </Alert>
+            )}
+          </div>
         </div>
       )}
     </BaseModal>

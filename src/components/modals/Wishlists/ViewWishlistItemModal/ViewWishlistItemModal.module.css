@@ -1,30 +1,128 @@
+/* Container for the content */
 .itemDetails {
-  padding: 0.5rem 0;
+  padding: 1rem;
 }
 
-.description {
+/* Title Section */
+.headerSection {
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.itemName {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+/* Badges */
+.badgeGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pillBadge {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  padding: 0.4em 0.9em;
+  border-radius: 50rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Main Content Grid */
+.contentGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Description Box */
+.descriptionBox {
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #a0aec0;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.descriptionText {
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 1.6;
+  color: #4a5568;
   margin: 0;
+  font-size: 0.95rem;
 }
 
-.priceEstimate {
-  font-size: 1.25rem;
+/* Price & Store Row */
+.metaRow {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.metaBlock {
+  flex: 1;
+  min-width: 140px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.priceValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2d3748;
+  line-height: 1.2;
+}
+
+.storeValue {
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--bs-success);
-  margin: 0;
+  color: #4a5568;
+  line-height: 1.2;
 }
 
-.productLink {
-  color: var(--bs-primary);
+/* Action Button */
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+  color: white;
+  border-radius: 12px;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
 }
 
-.productLink:hover {
-  color: var(--bs-primary);
-  text-decoration: underline;
-  gap: 0.75rem !important;
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(49, 130, 206, 0.3);
+  color: white;
+  text-decoration: none;
 }

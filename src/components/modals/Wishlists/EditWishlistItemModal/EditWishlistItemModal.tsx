@@ -293,6 +293,7 @@ export const EditWishlistItemModal: React.FC<EditWishlistItemModalProps> = ({
               placeholder="https://example.com/product"
               disabled={isSubmitting}
               className="mb-3"
+              maxLength={500}
             />
             <Form.Text className="text-muted d-block mb-3">
               Add a link to help your Secret Santa find the exact item.
