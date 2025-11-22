@@ -1,27 +1,17 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  Badge,
-  ListGroup,
-  Spinner,
-} from "react-bootstrap";
+import { Container, Spinner, Badge } from "react-bootstrap";
 import {
   FaSearch,
   FaPlus,
   FaUsers,
   FaCopy,
-  FaSignOutAlt,
   FaEye,
   FaChevronDown,
   FaChevronRight,
   FaLock,
   FaUnlock,
+  FaArrowRight,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useUserGroups, useApiRequest } from "@/hooks";
@@ -30,7 +20,6 @@ import {
   JoinGroupModal,
   ConfirmModal,
 } from "@/components/modals";
-import { InfoTooltip } from "@/components/ui";
 import { toast } from "react-toastify";
 import styles from "./GroupsClientPage.module.css";
 import { useSession } from "next-auth/react";
@@ -43,12 +32,6 @@ export default function GroupsClientPage() {
   const { apiRequest } = useApiRequest();
   const [searchQuery, setSearchQuery] = useState("");
   const [showArchived, setShowArchived] = useState(false);
-  const [confirmModal, setConfirmModal] = useState<{
-    show: boolean;
-    groupId: string;
-    groupName: string;
-  }>({ show: false, groupId: "", groupName: "" });
-  const [isLeaving, setIsLeaving] = useState(false);
   const [confirmGroupState, setConfirmGroupState] = useState<{
     show: boolean;
     groupId: string;
@@ -65,14 +48,11 @@ export default function GroupsClientPage() {
   useEffect(() => {
     const fetchOwnership = async () => {
       if (!session?.accessToken) return;
-
       const allGroups = [...activeGroups, ...archivedGroups];
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       for (const group of allGroups) {
-        // Skip if we already have ownership info
         if (ownershipMap.has(group.group_id)) continue;
-
         try {
           const response = await fetch(
             `${apiUrl}/api/groups/${group.group_id}/is-owner/`,
@@ -82,7 +62,6 @@ export default function GroupsClientPage() {
               },
             }
           );
-
           if (response.ok) {
             const data = await response.json();
             setOwnershipMap((prev) =>
@@ -97,13 +76,11 @@ export default function GroupsClientPage() {
         }
       }
     };
-
     fetchOwnership();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeGroups, archivedGroups, session?.accessToken]);
 
-  // Filter groups based on search query
+  // Filter groups
   const filteredActiveGroups = useMemo(() => {
     return activeGroups.filter((g) =>
       g.group_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -125,10 +102,6 @@ export default function GroupsClientPage() {
     }
   };
 
-  const handleLeaveGroup = (groupId: string, name: string) => {
-    setConfirmModal({ show: true, groupId, groupName: name });
-  };
-
   const handleToggleStatus = (
     groupName: string,
     groupID: string,
@@ -142,34 +115,6 @@ export default function GroupsClientPage() {
     });
   };
 
-  const confirmLeaveGroup = async () => {
-    setIsLeaving(true);
-    try {
-      const response = await apiRequest(
-        `/api/groups/${confirmModal.groupId}/leave/`,
-        {
-          method: "POST",
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to leave group");
-      }
-
-      toast.success(`Successfully left "${confirmModal.groupName}"`);
-      setConfirmModal({ show: false, groupId: "", groupName: "" });
-      await mutateGroups();
-    } catch (error) {
-      console.error("Leave group error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to leave group"
-      );
-    } finally {
-      setIsLeaving(false);
-    }
-  };
-
   const handleGroupStatusChange = async () => {
     setIsStatusLoading(true);
     try {
@@ -177,12 +122,10 @@ export default function GroupsClientPage() {
         `/api/groups/${confirmGroupState.groupId}/toggle-status/`,
         { method: "POST" }
       );
-
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to update group status");
+        throw new Error(errorData.detail || "Failed to update status");
       }
-
       toast.success(
         `Successfully ${confirmGroupState.isOpen ? "closed" : "opened"} group`
       );
@@ -190,7 +133,7 @@ export default function GroupsClientPage() {
     } catch (error) {
       console.error("Update group status error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to update group status"
+        error instanceof Error ? error.message : "Failed to update status"
       );
     } finally {
       setIsStatusLoading(false);
@@ -211,295 +154,218 @@ export default function GroupsClientPage() {
   return (
     <Container className={styles.container}>
       {/* Header */}
-      <Row className="mb-4">
-        <Col>
-          <h1 className={styles.pageTitle}>Your Groups</h1>
-          <p className="text-muted">
-            Manage all your Secret Santa groups in one place
-          </p>
-        </Col>
-      </Row>
+      <div className={styles.headerSection}>
+        <h1 className={styles.pageTitle}>Your Groups</h1>
+        <p className={styles.subtitle}>
+          Manage all your Secret Santa exchanges in one place.
+        </p>
+      </div>
 
-      {/* Actions Bar */}
-      <Row className="mb-4">
-        <Col md={6} className="mb-3 mb-md-0">
-          <Form.Group className={styles.searchBox}>
-            <FaSearch className={styles.searchIcon} />
-            <Form.Control
-              type="text"
-              placeholder="Search groups..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchInput}
-            />
-          </Form.Group>
-        </Col>
-        <Col md={6} className="d-flex gap-2 justify-content-md-end">
-          <CreateGroupModal
-            trigger={{
-              type: "button",
-              label: "Create Group",
-              icon: <FaPlus />,
-              variant: "brand",
-            }}
+      {/* Controls */}
+      <div className={styles.controlBar}>
+        <div className={styles.searchWrapper}>
+          <FaSearch className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Search groups..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
           />
+        </div>
+        <div className={styles.actionGroup}>
           <JoinGroupModal
             trigger={{
               type: "button",
               label: "Join Group",
               icon: <FaUsers />,
-              variant: "brandOutline",
+              variant: "outline-success",
             }}
           />
-        </Col>
-      </Row>
+          <CreateGroupModal
+            trigger={{
+              type: "button",
+              label: "Create Group",
+              icon: <FaPlus />,
+              variant: "success",
+            }}
+          />
+        </div>
+      </div>
 
       {/* Empty State */}
       {activeGroups.length === 0 && archivedGroups.length === 0 ? (
-        <Card className={styles.emptyState}>
-          <Card.Body className="text-center py-5">
-            <FaUsers size={64} className="text-muted mb-3" />
-            <h3>No Groups Yet</h3>
-            <p className="text-muted mb-4">
-              Create your first group or join an existing one to get started!
-            </p>
-            <div className="d-flex gap-3 justify-content-center">
-              <CreateGroupModal
-                trigger={{
-                  type: "button",
-                  label: "Create Group",
-                  variant: "brand",
-                }}
-              />
-              <JoinGroupModal
-                trigger={{
-                  type: "button",
-                  label: "Join Group",
-                  variant: "brandOutline",
-                }}
-              />
-            </div>
-          </Card.Body>
-        </Card>
+        <div className={styles.emptyState}>
+          <FaUsers size={48} color="#cbd5e0" className="mb-3" />
+          <h3 className="h5 text-secondary">No Groups Yet</h3>
+          <p className="text-muted mb-4">
+            Create your first group or join an existing one to get started!
+          </p>
+        </div>
       ) : (
         <>
-          {/* Active Groups */}
+          {/* Active Groups Grid */}
           {filteredActiveGroups.length > 0 && (
-            <div className="mb-4">
-              <h3 className={styles.sectionTitle}>
-                Active Groups ({filteredActiveGroups.length})
-              </h3>
-              <Card>
-                <ListGroup variant="flush">
-                  {filteredActiveGroups.map((group) => (
-                    <ListGroup.Item
-                      key={group.group_id}
-                      className={styles.groupItem}
-                    >
-                      <Row className="align-items-center">
-                        <Col md={5}>
-                          <a
-                            href={`/groups/${group.group_id}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              router.push(`/groups/${group.group_id}`);
-                            }}
-                            className="d-block text-decoration-none"
-                            style={{ color: "inherit", cursor: "pointer" }}
-                            aria-label={`Open ${
-                              group?.group_name || "Unknown Group"
-                            } Wishlist`}
-                          >
-                            <h5 className={styles.groupName}>
-                              {group.group_name}
-                            </h5>
-                            <div className="text-muted small">
-                              <FaUsers className="me-1" />
-                              {group.member_count || 0} members
-                              {group.group_code && (
-                                <>
-                                  {" • Code: "}
-                                  <code className={styles.codeText}>
-                                    {group.group_code}
-                                  </code>
-                                </>
-                              )}
-                            </div>
-                          </a>
-                        </Col>
-                        <Col md={3}>
-                          <div className="d-flex gap-2 flex-wrap align-items-center">
-                            <Badge bg={group.is_open ? "success" : "secondary"}>
-                              {group.is_open ? "Open" : "Closed"}
-                            </Badge>
-                            <InfoTooltip
-                              content={
-                                group.is_open ? (
-                                  <>
-                                    <strong>Open Group:</strong> People can
-                                    still join this group. Gift assignments
-                                    (wraps) are not yet available.
-                                  </>
-                                ) : (
-                                  <>
-                                    <strong>Closed Group:</strong> No one can
-                                    join anymore. You can now open your wrap to
-                                    see who you should gift!
-                                  </>
-                                )
-                              }
-                              placement="top"
-                              size="sm"
-                            />
-                            {group.is_white_elephant && (
-                              <Badge bg="warning" text="dark">
-                                🎲 White Elephant
-                              </Badge>
-                            )}
+            <>
+              <div className={styles.sectionHeader}>
+                <span className={styles.sectionTitle}>Active Groups</span>
+                <span className="badge bg-light text-dark border">
+                  {filteredActiveGroups.length}
+                </span>
+              </div>
+              <div className={styles.groupsGrid}>
+                {filteredActiveGroups.map((group) => {
+                  const isOwner = ownershipMap.get(group.group_id);
+                  return (
+                    <div key={group.group_id} className={styles.groupCard}>
+                      <div
+                        className={`${styles.statusLine} ${
+                          group.is_open ? styles.statusOpen : ""
+                        }`}
+                      />
+                      <div className={styles.cardHeader}>
+                        <div>
+                          <h3 className={styles.groupName}>
+                            {group.group_name}
+                          </h3>
+                          <div className={styles.memberCount}>
+                            <FaUsers size={12} /> {group.member_count || 0}{" "}
+                            members
                           </div>
-                        </Col>
-                        <Col md={4} className="text-md-end mt-2 mt-md-0">
-                          <div className={styles.actionButtons}>
-                            {ownershipMap.get(group.group_id) && (
-                              <Button
-                                variant={
-                                  group.is_open ? "secondary" : "success"
-                                }
-                                size="sm"
-                                onClick={() =>
-                                  handleToggleStatus(
-                                    group.group_name,
-                                    group.group_id,
-                                    group.is_open
-                                  )
-                                }
-                                disabled={isStatusLoading}
-                                aria-label={
-                                  group.is_open ? "Close group" : "Open group"
-                                }
-                                title={
-                                  group.is_open ? "Close group" : "Open group"
-                                }
-                              >
-                                {group.is_open ? <FaLock /> : <FaUnlock />}
-                              </Button>
-                            )}
+                        </div>
+                      </div>
 
-                            {group.group_code && (
-                              <Button
-                                size="sm"
-                                className={styles.copyButton}
-                                onClick={() =>
-                                  handleCopyCode(
-                                    group.group_code,
-                                    group.group_name
-                                  )
-                                }
-                                aria-label="Copy group code"
-                                title="Copy code"
-                              >
-                                <FaCopy />
-                              </Button>
-                            )}
+                      <div className={styles.badges}>
+                        <Badge
+                          bg={group.is_open ? "success" : "secondary"}
+                          className={styles.badgePill}
+                        >
+                          {group.is_open ? "Open" : "Closed"}
+                        </Badge>
+                        {group.is_white_elephant && (
+                          <Badge
+                            bg="warning"
+                            text="dark"
+                            className={styles.badgePill}
+                          >
+                            White Elephant
+                          </Badge>
+                        )}
+                      </div>
 
-                            <Button
-                              size="sm"
-                              className={styles.leaveButton}
+                      <div className={styles.cardFooter}>
+                        <div className={styles.roleBadge}>
+                          {isOwner ? "Admin" : "Member"}
+                        </div>
+                        <div className={styles.actionButtons}>
+                          {/* Quick Actions */}
+                          {group.group_code && (
+                            <button
+                              className={styles.iconBtn}
                               onClick={() =>
-                                handleLeaveGroup(
-                                  group.group_id,
+                                handleCopyCode(
+                                  group.group_code,
                                   group.group_name
                                 )
                               }
-                              title="Leave group"
+                              title="Copy Invite Code"
                             >
-                              <FaSignOutAlt />
-                            </Button>
-                          </div>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card>
-            </div>
+                              <FaCopy size={14} />
+                            </button>
+                          )}
+
+                          {isOwner && (
+                            <button
+                              className={styles.iconBtn}
+                              onClick={() =>
+                                handleToggleStatus(
+                                  group.group_name,
+                                  group.group_id,
+                                  group.is_open
+                                )
+                              }
+                              title={
+                                group.is_open ? "Close Group" : "Open Group"
+                              }
+                            >
+                              {group.is_open ? (
+                                <FaLock size={14} />
+                              ) : (
+                                <FaUnlock size={14} />
+                              )}
+                            </button>
+                          )}
+
+                          <button
+                            className={`${styles.iconBtn} ${styles.viewBtn}`}
+                            onClick={() =>
+                              router.push(`/groups/${group.group_id}`)
+                            }
+                            title="View Group"
+                          >
+                            <FaArrowRight size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
 
-          {/* Archived Groups - Collapsible */}
+          {/* Archived Groups Section */}
           {filteredArchivedGroups.length > 0 && (
-            <div className="mb-4">
-              <Card>
-                <Card.Header
-                  className={styles.archivedHeader}
+            <div className="mb-5">
+              <div className={styles.sectionHeader}>
+                <button
+                  className={styles.toggleArchived}
                   onClick={() => setShowArchived(!showArchived)}
-                  style={{ cursor: "pointer" }}
                 >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h5 className="mb-0">
-                      📦 Archived Groups ({filteredArchivedGroups.length})
-                    </h5>
-                    <span className="text-muted">
-                      {showArchived ? (
-                        <>
-                          <FaChevronDown className="me-1" /> Hide
-                        </>
-                      ) : (
-                        <>
-                          <FaChevronRight className="me-1" /> Show
-                        </>
-                      )}
-                    </span>
-                  </div>
-                </Card.Header>
-                {showArchived && (
-                  <ListGroup variant="flush">
-                    {filteredArchivedGroups.map((group) => (
-                      <ListGroup.Item
-                        key={group.group_id}
-                        className={styles.groupItem}
-                      >
-                        <Row className="align-items-center">
-                          <Col md={5}>
-                            <h5 className={styles.groupName}>
-                              {group.group_name}
-                            </h5>
-                            <div className="text-muted small">
-                              <FaUsers className="me-1" />
-                              {group.member_count || 0} members
-                            </div>
-                          </Col>
-                          <Col md={3}>
-                            <div className="d-flex gap-2 flex-wrap">
-                              <Badge bg="danger" className={styles.badge}>
-                                Archived
-                              </Badge>
-                              {group.is_white_elephant && (
-                                <Badge bg="warning" text="dark">
-                                  🎲 White Elephant
-                                </Badge>
-                              )}
-                            </div>
-                          </Col>
-                          <Col md={4} className="text-md-end mt-2 mt-md-0">
-                            <div className={styles.actionButtons}>
-                              <Button
-                                size="sm"
-                                className={styles.viewButton}
-                                onClick={() =>
-                                  router.push(`/groups/${group.group_id}`)
-                                }
-                                title="View archived group"
-                              >
-                                <FaEye />
-                              </Button>
-                            </div>
-                          </Col>
-                        </Row>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                )}
-              </Card>
+                  {showArchived ? <FaChevronDown /> : <FaChevronRight />}
+                  Archived Groups ({filteredArchivedGroups.length})
+                </button>
+              </div>
+
+              {showArchived && (
+                <div className={styles.groupsGrid}>
+                  {filteredArchivedGroups.map((group) => (
+                    <div key={group.group_id} className={styles.groupCard}>
+                      <div
+                        className={`${styles.statusLine} ${styles.statusArchived}`}
+                      />
+                      <div className={styles.cardHeader}>
+                        <div>
+                          <h3 className={styles.groupName}>
+                            {group.group_name}
+                          </h3>
+                          <div className={styles.memberCount}>
+                            <FaUsers size={12} /> {group.member_count || 0}{" "}
+                            members
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.badges}>
+                        <Badge bg="danger" className={styles.badgePill}>
+                          Archived
+                        </Badge>
+                      </div>
+                      <div className={styles.cardFooter}>
+                        <div className={styles.roleBadge}>Read Only</div>
+                        <button
+                          className={`${styles.iconBtn} ${styles.viewBtn}`}
+                          onClick={() =>
+                            router.push(`/groups/${group.group_id}`)
+                          }
+                          title="View Group"
+                        >
+                          <FaEye size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -507,34 +373,15 @@ export default function GroupsClientPage() {
           {searchQuery &&
             filteredActiveGroups.length === 0 &&
             filteredArchivedGroups.length === 0 && (
-              <Card className="text-center py-5">
-                <Card.Body>
-                  <p className="text-muted">
-                    No groups found matching &quot;{searchQuery}&quot;
-                  </p>
-                </Card.Body>
-              </Card>
+              <div className="text-center py-5">
+                <p className="text-muted">
+                  No groups found matching &quot;{searchQuery}&quot;
+                </p>
+              </div>
             )}
         </>
       )}
 
-      {/* Leave Group Confirmation Modal */}
-      <ConfirmModal
-        show={confirmModal.show}
-        onHide={() =>
-          setConfirmModal({ show: false, groupId: "", groupName: "" })
-        }
-        onConfirm={confirmLeaveGroup}
-        title="Leave Group"
-        message={`Are you sure you want to leave "${confirmModal.groupName}"?`}
-        confirmLabel="Leave Group"
-        cancelLabel="Cancel"
-        variant="danger"
-        isLoading={isLeaving}
-        alertMessage="You'll need to be invited again to rejoin this group."
-      />
-
-      {/* Toggle Group Status Confirmation Modal */}
       <ConfirmModal
         show={confirmGroupState.show}
         onHide={() =>
@@ -545,10 +392,10 @@ export default function GroupsClientPage() {
         message={
           confirmGroupState.isOpen
             ? `Close "${confirmGroupState.groupName}"? No one else can join and members can open their wraps.`
-            : `Open "${confirmGroupState.groupName}"? People can join again but they cannot open their wraps until you close the group again.`
+            : `Open "${confirmGroupState.groupName}"?`
         }
         confirmLabel={confirmGroupState.isOpen ? "Close Group" : "Open Group"}
-        variant={confirmGroupState.isOpen ? "warning" : "success"}
+        variant={confirmGroupState.isOpen ? "danger" : "success"}
         isLoading={isStatusLoading}
       />
     </Container>

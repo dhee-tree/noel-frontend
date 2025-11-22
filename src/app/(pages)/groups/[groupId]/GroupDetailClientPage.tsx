@@ -2,14 +2,12 @@
 import React, { useState } from "react";
 import {
   Container,
-  Row,
-  Col,
-  Card,
   Button,
   Badge,
   Spinner,
-  ListGroup,
   Alert,
+  OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
 import {
   FaArrowLeft,
@@ -19,15 +17,14 @@ import {
   FaCalendar,
   FaMoneyBillWave,
   FaMapMarkerAlt,
-  FaInfoCircle,
   FaSignOutAlt,
-  FaCog,
   FaTrash,
   FaLock,
   FaUnlock,
   FaGift,
   FaBell,
   FaHeart,
+  FaCrown,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
@@ -36,8 +33,13 @@ import {
   useApiRequest,
   useGroupPick,
 } from "@/hooks";
-import { EditGroupModal, ConfirmModal, RevealModal, PingUserModal, ViewWishlistFromPickModal } from "@/components/modals";
-import { InfoTooltip } from "@/components/ui";
+import {
+  EditGroupModal,
+  ConfirmModal,
+  RevealModal,
+  PingUserModal,
+  ViewWishlistFromPickModal,
+} from "@/components/modals";
 import { toast } from "react-toastify";
 import styles from "./GroupDetailClientPage.module.css";
 
@@ -62,9 +64,7 @@ export default function GroupDetailClientPage({
   const { group, isLoading, error, mutateGroup } = useGroupDetail(groupId);
   const { isOwner } = useIsGroupOwner(groupId);
   const { apiRequest } = useApiRequest();
-  const {
-    pick,
-  } = useGroupPick(groupId, group?.is_open);
+  const { pick } = useGroupPick(groupId, group?.is_open);
   const [confirmModal, setConfirmModal] = useState<{
     show: boolean;
     type: "leave" | "delete" | "archive" | "toggle-status" | null;
@@ -74,7 +74,7 @@ export default function GroupDetailClientPage({
   const handleCopyCode = () => {
     if (group?.group_code) {
       navigator.clipboard.writeText(group.group_code);
-      toast.success("Group code copied to clipboard!");
+      toast.success("Group code copied!");
     }
   };
 
@@ -114,7 +114,7 @@ export default function GroupDetailClientPage({
           break;
         case "toggle-status":
           endpoint = `/api/groups/${groupId}/toggle-status/`;
-          successMessage = `Group status changed to ${
+          successMessage = `Group is now ${
             group?.is_open ? "Closed" : "Open"
           }`;
           break;
@@ -123,12 +123,6 @@ export default function GroupDetailClientPage({
       const response = await apiRequest(endpoint, { method });
 
       if (!response.ok) {
-        if (response.status === 423) {
-          toast.error(
-            "This group is archived, you cannot perform this action."
-          );
-          return;
-        }
         const errorData = await response.json();
         throw new Error(errorData.detail || `Failed to ${confirmModal.type}`);
       }
@@ -157,7 +151,7 @@ export default function GroupDetailClientPage({
     const themeMap: Record<string, string> = {
       christmas: "🎄",
       office: "💼",
-      family: "👨‍👩‍👧‍👦",
+      family: "🏡",
       friends: "🎉",
       gaming: "🎮",
       custom: "✨",
@@ -166,20 +160,11 @@ export default function GroupDetailClientPage({
   };
 
   const formatDate = (dateString?: string | null) => {
-    if (!dateString) return "Not set";
+    if (!dateString) return "TBD";
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
     });
-  };
-
-  const formatCurrency = (amount?: number | null, currency: string = "USD") => {
-    if (!amount) return null;
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-    }).format(amount);
   };
 
   if (isLoading) {
@@ -187,7 +172,7 @@ export default function GroupDetailClientPage({
       <Container className={styles.container}>
         <div className="text-center py-5">
           <Spinner animation="border" variant="primary" />
-          <p className="mt-3 text-muted">Loading group details...</p>
+          <p className="mt-3 text-muted">Loading group...</p>
         </div>
       </Container>
     );
@@ -197,390 +182,298 @@ export default function GroupDetailClientPage({
     return (
       <Container className={styles.container}>
         <Alert variant="danger">
-          <Alert.Heading>Error Loading Group</Alert.Heading>
-          <p>
-            {error?.message ||
-              "Unable to load group details. The group may not exist or you don't have access."}
-          </p>
+          <p>Unable to load group details.</p>
           <Button
             variant="outline-danger"
             onClick={() => router.push("/groups")}
+            size="sm"
           >
-            <FaArrowLeft className="me-2" />
-            Back to Groups
+            <FaArrowLeft className="me-2" /> Back
           </Button>
         </Alert>
       </Container>
     );
   }
 
+  const currencySymbol =
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: group.budget_currency || "USD",
+    })
+      .formatToParts(0)
+      .find((part) => part.type === "currency")?.value || "$";
+
   return (
     <Container className={styles.container}>
-      <Row className="mb-4">
-        <Col>
-          <Button
-            variant="link"
-            className={styles.backButton}
-            onClick={() => router.push("/groups")}
-          >
-            <FaArrowLeft className="me-2" />
-            Back to Groups
-          </Button>
-        </Col>
-      </Row>
+      <a
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          router.push("/groups");
+        }}
+        className={styles.backButton}
+      >
+        <FaArrowLeft className="me-2" /> Back to Groups
+      </a>
 
-      <Row>
-        <Col>
-          <Card className={styles.headerCard}>
-            <Card.Body>
-              <div className={styles.headerContent}>
-                <div className={styles.titleSection}>
-                  <h1 className={styles.groupTitle}>
-                    {getThemeEmoji(group.theme)} {group.group_name}
-                  </h1>
-                  <div className={styles.badges}>
-                    <div className="d-flex align-items-center gap-1">
-                      <Badge
-                        bg={
-                          group.is_archived
-                            ? "danger"
-                            : group.is_open
-                            ? "success"
-                            : "secondary"
-                        }
-                      >
-                        {group.is_archived
-                          ? "Archived"
-                          : group.is_open
-                          ? "Open"
-                          : "Closed"}
-                      </Badge>
-                      {!group.is_archived && (
-                        <InfoTooltip
-                          content={
-                            group.is_open ? (
-                              <>
-                                <strong>Open Group:</strong> People can still
-                                join this group. Gift assignments (wraps) are
-                                not yet available.
-                              </>
-                            ) : (
-                              <>
-                                <strong>Closed Group:</strong> No one can join
-                                anymore. You can now open your wrap to see who
-                                you should gift!
-                              </>
-                            )
-                          }
-                          placement="bottom"
-                          size="sm"
-                        />
-                      )}
-                    </div>
-                    {group.is_white_elephant && (
-                      <Badge bg="warning" text="dark">
-                        🎲 White Elephant
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                {!group.is_archived && (
-                  <div className={styles.headerActions}>
-                    {isOwner && (
-                      <div className="d-flex align-items-center gap-1">
-                        <Button
-                          variant={
-                            group.is_open
-                              ? "outline-secondary"
-                              : "outline-success"
-                          }
-                          size="sm"
-                          onClick={handleToggleStatus}
-                          disabled={isActionLoading}
-                          aria-label={
-                            group.is_open ? "Close group" : "Open group"
-                          }
-                          title={group.is_open ? "Close group" : "Open group"}
-                        >
-                          {group.is_open ? <FaLock /> : <FaUnlock />}
-                        </Button>
-                      </div>
-                    )}
-                    {group.group_code && (
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={handleCopyCode}
-                        aria-label="Copy group code"
-                        title="Copy group code"
-                      >
-                        <FaCopy className="me-2" />
-                        {group.group_code}
-                      </Button>
-                    )}
-                    {isOwner && (
-                      <EditGroupModal
-                        trigger={{
-                          type: "button",
-                          label: "Edit Group",
-                          icon: <FaEdit />,
-                          variant: "dark",
-                          size: "sm",
-                        }}
-                        onSuccess={mutateGroup}
-                        group={group}
-                      />
-                    )}
-                  </div>
+      {/* --- Hero Section --- */}
+      <div className={styles.heroCard}>
+        <div className={styles.heroHeader}>
+          <div className={styles.groupIdentity}>
+            <div className={styles.themeIcon}>{getThemeEmoji(group.theme)}</div>
+            <div>
+              <div className={styles.badgeGroup}>
+                <Badge
+                  bg={
+                    group.is_archived
+                      ? "danger"
+                      : group.is_open
+                      ? "success"
+                      : "secondary"
+                  }
+                  pill
+                >
+                  {group.is_archived
+                    ? "Archived"
+                    : group.is_open
+                    ? "Open for Joining"
+                    : "Closed"}
+                </Badge>
+                {group.is_white_elephant && (
+                  <Badge bg="warning" text="dark" pill>
+                    White Elephant
+                  </Badge>
                 )}
               </div>
+              <h1 className={styles.groupTitle}>{group.group_name}</h1>
               {group.description && (
                 <p className={styles.description}>{group.description}</p>
               )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+            </div>
+          </div>
 
-      <Row className="mt-4">
-        {/* Budget Info */}
-        {(group.budget_min || group.budget_max) && (
-          <Col md={6} lg={3} className="mb-3">
-            <Card className={styles.infoCard}>
-              <Card.Body>
-                <div className={styles.infoIcon}>
-                  <FaMoneyBillWave />
-                </div>
-                <h6 className={styles.infoTitle}>Budget Range</h6>
-                <p className={styles.infoValue}>
-                  {formatCurrency(group.budget_min, group.budget_currency)} -{" "}
-                  {formatCurrency(group.budget_max, group.budget_currency)}
-                </p>
-              </Card.Body>
-            </Card>
-          </Col>
-        )}
+          <div className={styles.actionBar}>
+            {isOwner && (
+              <>
+                <Button
+                  variant={group.is_open ? "light" : "success"}
+                  size="sm"
+                  onClick={handleToggleStatus}
+                  disabled={isActionLoading}
+                  className="d-flex align-items-center gap-2"
+                >
+                  {group.is_open ? <FaLock /> : <FaUnlock />}
+                  {group.is_open ? "Close Group" : "Open Group"}
+                </Button>
+                <EditGroupModal
+                  trigger={{
+                    type: "button",
+                    label: "Edit",
+                    icon: <FaEdit />,
+                    variant: "light",
+                    size: "sm",
+                  }}
+                  onSuccess={mutateGroup}
+                  group={group}
+                />
+              </>
+            )}
+          </div>
+        </div>
+      </div>
 
-        {/* Exchange Date */}
-        {group.gift_exchange_deadline && (
-          <Col md={6} lg={3} className="mb-3">
-            <Card className={styles.infoCard}>
-              <Card.Body>
-                <div className={styles.infoIcon}>
-                  <FaCalendar />
-                </div>
-                <h6 className={styles.infoTitle}>Exchange Date</h6>
-                <p className={styles.infoValue}>
-                  {formatDate(group.gift_exchange_deadline)}
-                </p>
-              </Card.Body>
-            </Card>
-          </Col>
-        )}
-
-        {/* Location */}
-        {group.exchange_location && (
-          <Col md={6} lg={3} className="mb-3">
-            <Card className={styles.infoCard}>
-              <Card.Body>
-                <div className={styles.infoIcon}>
-                  <FaMapMarkerAlt />
-                </div>
-                <h6 className={styles.infoTitle}>Location</h6>
-                <p className={styles.infoValue}>{group.exchange_location}</p>
-              </Card.Body>
-            </Card>
-          </Col>
-        )}
-      </Row>
-
-      {/* Important Dates */}
-      {(group.join_deadline ||
-        group.wishlist_deadline ||
-        group.assignment_reveal_date) && (
-        <Row className="mb-4">
-          <Col>
-            <Card className={styles.datesCard}>
-              <Card.Header>
-                <FaCalendar className="me-2" />
-                Important Dates
-              </Card.Header>
-              <Card.Body>
-                <Row>
-                  {group.join_deadline && (
-                    <Col md={4} className="mb-3 mb-md-0">
-                      <strong className="d-block text-muted mb-1">
-                        Join Deadline
-                      </strong>
-                      <span>{formatDate(group.join_deadline)}</span>
-                    </Col>
-                  )}
-                  {group.wishlist_deadline && (
-                    <Col md={4} className="mb-3 mb-md-0">
-                      <strong className="d-block text-muted mb-1">
-                        Wishlist Deadline
-                      </strong>
-                      <span>{formatDate(group.wishlist_deadline)}</span>
-                    </Col>
-                  )}
-                  {group.assignment_reveal_date && (
-                    <Col md={4}>
-                      <strong className="d-block text-muted mb-1">
-                        Assignment Reveal
-                      </strong>
-                      <span>{formatDate(group.assignment_reveal_date)}</span>
-                    </Col>
-                  )}
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      )}
-
-      {/* Members List */}
-      <Row className="mb-4">
-        <Col>
-          <Card className={styles.membersCard}>
-            <Card.Header className={styles.membersHeader}>
-              <FaUsers className="me-2" />
-              Members ({group.members?.length || 0})
-            </Card.Header>
-            <ListGroup variant="flush">
-              {group.members && group.members.length > 0 ? (
-                group.members.map((member: Member) => (
-                  <ListGroup.Item
-                    key={member.user_id}
-                    className={styles.memberItem}
-                  >
-                    <div className={styles.memberInfo}>
-                      <div className={styles.memberAvatar}>
-                        {member.first_name?.[0] || member.username[0]}
-                      </div>
-                      <div className={styles.memberDetails}>
-                        <strong>
-                          {member.first_name} {member.last_name}
-                        </strong>
-                      </div>
-                    </div>
-                    {group?.created_by_id === member.user_id && (
-                      <Badge bg="success">
-                        <FaCog className="me-1" />
-                        Organiser
-                      </Badge>
-                    )}
-                  </ListGroup.Item>
-                ))
-              ) : (
-                <ListGroup.Item className="text-center text-muted py-4">
-                  <FaInfoCircle className="me-2" />
-                  No members yet. Share the group code to invite people!
-                </ListGroup.Item>
-              )}
-            </ListGroup>
-            {!group.is_archived && !group.is_open && (
-              <div className="p-3 d-flex align-items-center">
-                <div className="me-3">
-                  <RevealModal
+      {/* --- Dashboard Grid --- */}
+      <div className={styles.dashboardGrid}>
+        {/* Left: Action Card (Reveal OR Invite Code) */}
+        {group.is_open ? (
+          <div className={`${styles.actionCard} ${styles.highlight}`}>
+            <div className={styles.actionTitle}>Invite Friends</div>
+            <div className="mb-3">
+              <strong className="h2 d-block mb-1">{group.group_code}</strong>
+              <span className="text-muted small">Group Code</span>
+            </div>
+            <Button onClick={handleCopyCode} variant="primary" size="sm">
+              <FaCopy className="me-2" /> Copy Code
+            </Button>
+          </div>
+        ) : (
+          <div className={styles.actionCard}>
+            <div className={styles.actionTitle}>Your Match</div>
+            <div className="mb-3">
+              <RevealModal
+                trigger={{
+                  type: "button",
+                  label: pick ? "View Your Pick" : "Reveal Match",
+                  icon: <FaGift />,
+                  variant: pick ? "outline-success" : "success",
+                  size: "lg",
+                  className: "px-4 py-2 fw-bold shadow-sm",
+                }}
+                groupId={groupId}
+                leftToPick={Math.max(
+                  (group?.members_left_to_pick ?? 0) - 1,
+                  0
+                )}
+                pick={pick}
+              />
+            </div>
+            {pick && (
+              <div className="d-flex flex-column gap-2 w-100 px-4">
+                {pick.wishlist_id ? (
+                  <ViewWishlistFromPickModal
                     trigger={{
                       type: "button",
-                      label: pick ? "View Your Pick" : "Reveal Your Pick",
-                      icon: <FaGift />,
-                      variant: "dark",
+                      label: "View Wishlist",
+                      icon: <FaHeart />,
+                      variant: "outline-danger",
                       size: "sm",
+                      className: "w-100",
                     }}
-                    groupId={groupId}
-                    leftToPick={Math.max(
-                      (group?.members_left_to_pick ?? 0) - 1,
-                      0
-                    )}
-                    pick={pick}
+                    wishlistId={pick.wishlist_id}
                   />
-                </div>
-                {pick && (
-                  <div className="d-flex align-items-center gap-2">
-                    {pick.wishlist_id ? (
-                      <ViewWishlistFromPickModal
-                        trigger={{
-                          type: "button",
-                          label: "View Your Pick's Wishlist",
-                          icon: <FaHeart />,
-                          variant: "outline-dark",
-                          size: "sm",
-                        }}
-                        wishlistId={pick.wishlist_id}
-                      />
-                    ) : (
-                      <PingUserModal
-                        trigger={{
-                          type: "button",
-                          label: "Ping to Add Wishlist",
-                          variant: "outline-success",
-                          size: "sm",
-                          icon: <FaBell />,
-                        }}
-                        pickID={pick.pick_id}
-                        pingType="wishlist"
-                        modalSize="lg"
-                      />
-                    )}
-                  </div>
+                ) : (
+                  <PingUserModal
+                    trigger={{
+                      type: "button",
+                      label: "Ping for Wishlist",
+                      variant: "outline-secondary",
+                      size: "sm",
+                      icon: <FaBell />,
+                      className: "w-100",
+                    }}
+                    pickID={pick.pick_id}
+                    pingType="wishlist"
+                    modalSize="lg"
+                  />
                 )}
               </div>
             )}
-          </Card>
-        </Col>
-      </Row>
+          </div>
+        )}
 
-      {/* Danger Zone - Only visible to group owner */}
+        {/* Right: Info Grid */}
+        <div className={styles.infoGridContainer}>
+          <div className={styles.infoItem}>
+            <div className={styles.infoLabel}>
+              <FaMoneyBillWave className={styles.infoIcon} /> Budget
+            </div>
+            <div className={styles.infoValue}>
+              {group.budget_min || group.budget_max ? (
+                <>
+                  {currencySymbol}
+                  {group.budget_min || 0} - {currencySymbol}
+                  {group.budget_max || "?"}
+                </>
+              ) : (
+                "None"
+              )}
+            </div>
+          </div>
+
+          <div className={styles.infoItem}>
+            <div className={styles.infoLabel}>
+              <FaCalendar className={styles.infoIcon} /> Exchange Date
+            </div>
+            <div className={styles.infoValue}>
+              {formatDate(group.gift_exchange_deadline)}
+            </div>
+          </div>
+
+          <div className={styles.infoItem}>
+            <div className={styles.infoLabel}>
+              <FaMapMarkerAlt className={styles.infoIcon} /> Location
+            </div>
+            <div className={styles.infoValue}>
+              {group.exchange_location || "Remote / TBD"}
+            </div>
+          </div>
+
+          <div className={styles.infoItem}>
+            <div className={styles.infoLabel}>
+              <FaCalendar className={styles.infoIcon} /> RSVP Deadline
+            </div>
+            <div className={styles.infoValue}>
+              {formatDate(group.join_deadline)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* --- Members Section --- */}
+      <div className="mb-5">
+        <h3 className={styles.sectionTitle}>
+          <FaUsers className="text-primary" /> Members (
+          {group.members?.length || 0})
+        </h3>
+        <div className={styles.membersCard}>
+          {group.members && group.members.length > 0 ? (
+            group.members.map((member: Member) => (
+              <div key={member.user_id} className={styles.memberItem}>
+                <div className={styles.memberInfo}>
+                  <div
+                    className={`${styles.memberAvatar} ${
+                      group.created_by_id === member.user_id
+                        ? styles.isOwnerAvatar
+                        : ""
+                    }`}
+                  >
+                    {member.first_name?.[0] || member.username[0]}
+                  </div>
+                  <div>
+                    <span className={styles.memberName}>
+                      {member.first_name} {member.last_name}{" "}
+                      {group.created_by_id === member.user_id && (
+                        <OverlayTrigger
+                          placement="top"
+                          overlay={<Tooltip>Group Organiser</Tooltip>}
+                        >
+                          <span className="text-warning ms-1" style={{ cursor: 'help' }}>
+                            <FaCrown size={12} />
+                          </span>
+                        </OverlayTrigger>
+                      )}
+                    </span>
+                    <span className={styles.joinDate}>
+                      Joined {formatDate(member.date_created)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-5 text-muted">
+              No members yet. Invite some friends!
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- Danger Zone (Owner Only) --- */}
       {isOwner && (
-        <Row>
-          <Col>
-            <Card className={styles.dangerCard}>
-              <Card.Header className="text-danger">
-                <FaInfoCircle className="me-2" />
-                Danger Zone
-              </Card.Header>
-              <Card.Body>
-                <div className="mb-4 pb-4 border-bottom">
-                  <h6 className="fw-bold mb-2">Leave Group</h6>
-                  <p className="text-muted mb-3">
-                    Remove yourself from this group. You won&lsquo;t be able to
-                    rejoin unless invited again by another member.
-                  </p>
-                  <Button
-                    variant="outline-danger"
-                    onClick={handleLeaveGroup}
-                    disabled={isActionLoading}
-                  >
-                    <FaSignOutAlt className="me-2" />
-                    Leave Group
-                  </Button>
-                </div>
-
-                <div>
-                  <h6 className="fw-bold mb-2 text-danger">Delete Group</h6>
-                  <p className="text-muted mb-3">
-                    Permanently delete this group. This action{" "}
-                    <strong>cannot be undone</strong>. All members, assignments,
-                    and data will be lost.
-                  </p>
-                  <Button
-                    variant="danger"
-                    onClick={handleDeleteGroup}
-                    disabled={isActionLoading}
-                  >
-                    <FaTrash className="me-2" />
-                    Delete Group Permanently
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+        <div className={styles.dangerZone}>
+          <h5 className="mb-3 fw-bold text-secondary">Group Management</h5>
+          <div className={styles.dangerGrid}>
+            <Button
+              variant="outline-secondary"
+              onClick={handleLeaveGroup}
+              disabled={isActionLoading}
+              className="d-flex align-items-center justify-content-center gap-2"
+            >
+              <FaSignOutAlt /> Leave Group
+            </Button>
+            <Button
+              variant="outline-danger"
+              onClick={handleDeleteGroup}
+              disabled={isActionLoading}
+              className="d-flex align-items-center justify-content-center gap-2"
+            >
+              <FaTrash /> Delete Group
+            </Button>
+          </div>
+        </div>
       )}
 
-      {/* Confirmation Modals */}
+      {/* --- Modals (Logic remains unchanged) --- */}
       {confirmModal.type === "leave" && (
         <ConfirmModal
           show={confirmModal.show}
@@ -591,7 +484,6 @@ export default function GroupDetailClientPage({
           confirmLabel="Leave Group"
           variant="danger"
           isLoading={isActionLoading}
-          alertMessage="You won't be able to rejoin unless invited again by another member."
         />
       )}
 
@@ -601,11 +493,11 @@ export default function GroupDetailClientPage({
           onHide={() => setConfirmModal({ show: false, type: null })}
           onConfirm={confirmAction}
           title="Delete Group"
-          message={`Are you sure you want to permanently delete "${group?.group_name}"?`}
+          message={`Are you sure you want to delete "${group?.group_name}"?`}
           confirmLabel="Delete Permanently"
           variant="danger"
           isLoading={isActionLoading}
-          alertMessage="This action CANNOT be undone. All members, assignments, and data will be lost forever."
+          alertMessage="This cannot be undone."
         />
       )}
 
@@ -617,11 +509,11 @@ export default function GroupDetailClientPage({
           title={group?.is_open ? "Close Group" : "Open Group"}
           message={
             group?.is_open
-              ? `Close "${group?.group_name}"? No one else can join and members can open their wraps.`
-              : `Open "${group?.group_name}"? People can join again but they cannot open their wraps until you close the group again.`
+              ? "Closing the group will allow members to see their matches. No new members can join."
+              : "Opening the group allows new members to join, but hides matches."
           }
           confirmLabel={group?.is_open ? "Close Group" : "Open Group"}
-          variant={group?.is_open ? "warning" : "success"}
+          variant={group?.is_open ? "danger" : "success"}
           isLoading={isActionLoading}
         />
       )}

@@ -23,8 +23,6 @@ const EditGroupSchema = z.object({
   budgetMax: z.string().optional(),
   exchangeLocation: z.string().optional(),
   joinDeadline: z.string().optional(),
-  wishlistDeadline: z.string().optional(),
-  assignmentRevealDate: z.string().optional(),
   giftExchangeDeadline: z.string().optional(),
   isWhiteElephant: z.boolean().optional(),
 });
@@ -89,12 +87,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
         joinDeadline: group.join_deadline
           ? new Date(group.join_deadline).toISOString().split("T")[0]
           : "",
-        wishlistDeadline: group.wishlist_deadline
-          ? new Date(group.wishlist_deadline).toISOString().split("T")[0]
-          : "",
-        assignmentRevealDate: group.assignment_reveal_date
-          ? new Date(group.assignment_reveal_date).toISOString().split("T")[0]
-          : "",
         giftExchangeDeadline: group.gift_exchange_deadline
           ? new Date(group.gift_exchange_deadline).toISOString().split("T")[0]
           : "",
@@ -122,10 +114,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
       if (data.exchangeLocation?.trim())
         requestBody.exchange_location = data.exchangeLocation.trim();
       if (data.joinDeadline) requestBody.join_deadline = data.joinDeadline;
-      if (data.wishlistDeadline)
-        requestBody.wishlist_deadline = data.wishlistDeadline;
-      if (data.assignmentRevealDate)
-        requestBody.assignment_reveal_date = data.assignmentRevealDate;
       if (data.giftExchangeDeadline)
         requestBody.gift_exchange_deadline = data.giftExchangeDeadline;
       if (data.isWhiteElephant !== undefined)
@@ -300,34 +288,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
               />
               <Form.Text className="text-muted d-block mb-3">
                 Last day to join the group
-              </Form.Text>
-            </div>
-            <div className="col-md-6">
-              <InputField
-                name="wishlistDeadline"
-                label="Wishlist Deadline"
-                type="date"
-                register={register}
-                error={errors.wishlistDeadline}
-                disabled={isSubmitting}
-              />
-              <Form.Text className="text-muted d-block mb-3">
-                Last day to submit wishlists
-              </Form.Text>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6">
-              <InputField
-                name="assignmentRevealDate"
-                label="Assignment Reveal Date"
-                type="date"
-                register={register}
-                error={errors.assignmentRevealDate}
-                disabled={isSubmitting}
-              />
-              <Form.Text className="text-muted d-block mb-3">
-                When Secret Santa assignments are revealed
               </Form.Text>
             </div>
             <div className="col-md-6">

@@ -39,9 +39,7 @@ const CreateGroupSchema = z.object({
   theme: z.string().optional(),
   budgetMin: z.string().optional(),
   budgetMax: z.string().optional(),
-  assignmentRevealDate: z.string().optional(),
   giftExchangeDeadline: z.string().optional(),
-  wishlistDeadline: z.string().optional(),
   joinDeadline: z.string().optional(),
   exchangeLocation: z.string().optional(),
   isWhiteElephant: z.boolean().optional(),
@@ -99,14 +97,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       if (data.budgetMax) {
         requestBody.budget_max = parseFloat(data.budgetMax);
       }
-      if (data.assignmentRevealDate) {
-        requestBody.assignment_reveal_date = data.assignmentRevealDate;
-      }
       if (data.giftExchangeDeadline) {
         requestBody.gift_exchange_deadline = data.giftExchangeDeadline;
-      }
-      if (data.wishlistDeadline) {
-        requestBody.wishlist_deadline = data.wishlistDeadline;
       }
       if (data.joinDeadline) {
         requestBody.join_deadline = data.joinDeadline;
@@ -313,34 +305,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               />
               <Form.Text className="text-muted d-block mb-3">
                 Last day to join the group
-              </Form.Text>
-            </div>
-            <div className="col-md-6">
-              <InputField
-                name="wishlistDeadline"
-                label="Wishlist Deadline"
-                type="date"
-                register={register}
-                error={errors.wishlistDeadline}
-                disabled={isSubmitting}
-              />
-              <Form.Text className="text-muted d-block mb-3">
-                Last day to submit wishlists
-              </Form.Text>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6">
-              <InputField
-                name="assignmentRevealDate"
-                label="Assignment Reveal Date"
-                type="date"
-                register={register}
-                error={errors.assignmentRevealDate}
-                disabled={isSubmitting}
-              />
-              <Form.Text className="text-muted d-block mb-3">
-                When Secret Santa assignments are revealed
               </Form.Text>
             </div>
             <div className="col-md-6">

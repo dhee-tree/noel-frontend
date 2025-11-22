@@ -156,8 +156,7 @@ export default function DashboardClientPage({ session }: { session: Session }) {
                     Hey {displayName} — welcome back!
                   </h2>
                   <p className={styles.heroSubtitle}>
-                    Your festive hub: manage groups, wishlists and surprises —
-                    all in one place.
+                    Ready to spread some holiday cheer?
                   </p>
 
                   <div className={styles.heroButtons}>

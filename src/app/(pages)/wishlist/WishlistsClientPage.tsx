@@ -1,15 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Spinner,
-  ListGroup,
-} from "react-bootstrap";
-import { FaPlus, FaGift, FaList, FaTrash } from "react-icons/fa";
+import { Container, Button, Spinner } from "react-bootstrap";
+import { FaPlus, FaGift, FaList, FaTrash, FaArrowRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useUserWishlists, useUserGroups, useApiRequest } from "@/hooks";
 import { CreateWishlistModal, ConfirmModal } from "@/components/modals";
@@ -23,11 +15,7 @@ export default function WishlistsClientPage() {
     isLoading: wishlistsLoading,
     mutateWishlists,
   } = useUserWishlists();
-  const {
-    activeGroups,
-    archivedGroups,
-    isLoading: groupsLoading,
-  } = useUserGroups();
+  const { activeGroups, isLoading: groupsLoading } = useUserGroups();
   const { apiRequest } = useApiRequest();
 
   const [deleteModal, setDeleteModal] = useState<{
@@ -37,14 +25,13 @@ export default function WishlistsClientPage() {
   }>({ show: false, wishlistId: "", wishlistName: "" });
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const allGroups = [...activeGroups, ...archivedGroups];
+  const allGroups = [...activeGroups];
   const isLoading = wishlistsLoading || groupsLoading;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
     });
   };
 
@@ -91,126 +78,109 @@ export default function WishlistsClientPage() {
 
   return (
     <Container className={styles.container}>
-      {/* Header */}
-      <Row className="mb-4">
-        <Col>
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
-            <div>
-              <h1 className={styles.pageTitle}>
-                <FaGift className="me-2" />
-                My Wishlists
-              </h1>
-              <p className="text-muted mb-0">
-                Manage your wishlists for all your Secret Santa groups.
-              </p>
-            </div>
-            <CreateWishlistModal
-              trigger={{
-                type: "button",
-                label: "Create Wishlist",
-                icon: <FaPlus />,
-                variant: "dark",
-                className: "flex-shrink-0",
-              }}
-              groups={allGroups}
-            />
-          </div>
-        </Col>
-      </Row>
+      {/* Header Section */}
+      <div className={styles.headerSection}>
+        <div>
+          <h1 className={styles.pageTitle}>My Wishlists</h1>
+          <p className={styles.subtitle}>
+            Create and manage wishlists for your Secret Santa exchanges.
+          </p>
+        </div>
+        <CreateWishlistModal
+          trigger={{
+            type: "button",
+            label: "New Wishlist",
+            icon: <FaPlus />,
+            variant: "dark",
+            size: "lg",
+          }}
+          groups={allGroups}
+        />
+      </div>
 
       {/* Empty State */}
       {wishlists.length === 0 ? (
-        <Card className={styles.emptyState}>
-          <Card.Body className="text-center py-5">
-            <FaList size={64} className="text-muted mb-3" />
-            <h3>No Wishlists Yet</h3>
-            <p className="text-muted mb-4">
-              Create your first wishlist to let your Secret Santa know what
-              you&apos;d like!
-            </p>
-            {allGroups.length > 0 ? (
-              <CreateWishlistModal
-                trigger={{
-                  type: "button",
-                  label: "Create Your First Wishlist",
-                  variant: "dark",
-                }}
-                groups={allGroups}
-              />
-            ) : (
-              <div>
-                <p className="text-muted mb-3">
-                  You need to join or create a group first.
-                </p>
-                <Button variant="brand" onClick={() => router.push("/groups")}>
-                  Go to Groups
-                </Button>
-              </div>
-            )}
-          </Card.Body>
-        </Card>
+        <div className={styles.emptyState}>
+          <FaList size={48} className="text-secondary mb-3 opacity-50" />
+          <h3 className="h4 text-dark mb-2">No Wishlists Yet</h3>
+          <p className="text-muted mb-4" style={{ maxWidth: "400px" }}>
+            Create a wishlist to help your Secret Santa find the perfect gift
+            for you!
+          </p>
+          {allGroups.length > 0 ? (
+            <CreateWishlistModal
+              trigger={{
+                type: "button",
+                label: "Create Your First Wishlist",
+                variant: "dark",
+              }}
+              groups={allGroups}
+            />
+          ) : (
+            <div className="d-flex flex-column align-items-center gap-3">
+              <p className="text-muted m-0">
+                You need to join a group before creating a wishlist.
+              </p>
+              <Button
+                variant="outline-primary"
+                onClick={() => router.push("/groups")}
+              >
+                Browse Groups
+              </Button>
+            </div>
+          )}
+        </div>
       ) : (
-        <Card>
-          <ListGroup variant="flush">
-            {wishlists.map((wishlist) => {
-              return (
-                <ListGroup.Item
-                  key={wishlist.wishlist_id}
-                  className={styles.wishlistItem}
-                >
-                  <Row className="align-items-start align-items-md-center">
-                    <Col xs={12} md={7}>
-                      <a
-                        href={`/wishlist/${wishlist.wishlist_id}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          router.push(`/wishlist/${wishlist.wishlist_id}`);
-                        }}
-                        className="d-block text-decoration-none"
-                        style={{ color: "inherit", cursor: "pointer" }}
-                        aria-label={`Open ${wishlist.name}`}
-                      >
-                        <div className="d-flex align-items-start gap-2 gap-md-3">
-                          <div className={styles.wishlistIcon}>
-                            <FaGift />
-                          </div>
-                          <div className="flex-grow-1 overflow-hidden">
-                            <h5
-                              className={`${styles.wishlistName} text-truncate`}
-                            >
-                              {wishlist.name}
-                            </h5>
-                            <div className="text-muted small">
-                              <span>
-                                Updated {formatDate(wishlist.date_updated)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    </Col>
-                    <Col xs={12} md={5} className="text-md-end mt-2 mt-md-0">
-                      <div className="d-flex gap-2 justify-content-md-end">
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() =>
-                            handleDeleteWishlist(
-                              wishlist.wishlist_id,
-                              wishlist.name
-                            )
-                          }
-                        >
-                          <FaTrash />
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                </ListGroup.Item>
-              );
-            })}
-          </ListGroup>
-        </Card>
+        /* Wishlist Grid */
+        <div className={styles.grid}>
+          {wishlists.map((wishlist) => (
+            <div key={wishlist.wishlist_id} className={styles.card}>
+              {/* Card Header */}
+              <div className={styles.cardHeader}>
+                <div className={styles.iconWrapper}>
+                  <FaGift />
+                </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.wishlistName} title={wishlist.name}>
+                    {wishlist.name}
+                  </h3>
+                  <p className={styles.metaText}>
+                    Updated {formatDate(wishlist.date_updated)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Footer */}
+              <div className={styles.cardFooter}>
+                <span className={styles.itemCount}>
+                  {wishlist.items?.length || 0} Items
+                </span>
+
+                <div className={styles.actionButtons}>
+                  <button
+                    className={styles.iconBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteWishlist(wishlist.wishlist_id, wishlist.name);
+                    }}
+                    title="Delete Wishlist"
+                  >
+                    <FaTrash size={14} />
+                  </button>
+
+                  <button
+                    className={`${styles.iconBtn} ${styles.viewBtn}`}
+                    onClick={() =>
+                      router.push(`/wishlist/${wishlist.wishlist_id}`)
+                    }
+                  >
+                    View <FaArrowRight size={12} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       <ConfirmModal
@@ -224,7 +194,7 @@ export default function WishlistsClientPage() {
         confirmLabel="Delete Wishlist"
         variant="danger"
         isLoading={isDeleting}
-        alertMessage="This will permanently delete the wishlist and all its items. This action cannot be undone."
+        alertMessage="This will permanently delete the wishlist and all its items."
       />
     </Container>
   );
