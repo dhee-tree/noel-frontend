@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { apiRequest as baseApiRequest } from "@/lib/utils";
 
-interface ApiRequestOptions {
+export interface ApiRequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: Record<string, unknown> | unknown[];
   headers?: Record<string, string>;

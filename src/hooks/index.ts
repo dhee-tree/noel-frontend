@@ -8,3 +8,4 @@ export { useUserGroups } from "./useUserGroups";
 export { useUserWishlists } from "./useUserWishlists";
 export { useWishlist } from "./useWishlist";
 export { useWishlistItems } from "./useWishlistItems";
+export { useGroupPick } from "./useGroupPick";
