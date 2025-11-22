@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   Container,
@@ -26,10 +25,18 @@ import {
   FaTrash,
   FaLock,
   FaUnlock,
+  FaGift,
+  FaBell,
+  FaHeart,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useGroupDetail, useIsGroupOwner, useApiRequest } from "@/hooks";
-import { EditGroupModal, ConfirmModal } from "@/components/modals";
+import {
+  useGroupDetail,
+  useIsGroupOwner,
+  useApiRequest,
+  useGroupPick,
+} from "@/hooks";
+import { EditGroupModal, ConfirmModal, RevealModal, PingUserModal, ViewWishlistFromPickModal } from "@/components/modals";
 import { InfoTooltip } from "@/components/ui";
 import { toast } from "react-toastify";
 import styles from "./GroupDetailClientPage.module.css";
@@ -55,6 +62,9 @@ export default function GroupDetailClientPage({
   const { group, isLoading, error, mutateGroup } = useGroupDetail(groupId);
   const { isOwner } = useIsGroupOwner(groupId);
   const { apiRequest } = useApiRequest();
+  const {
+    pick,
+  } = useGroupPick(groupId, group?.is_open);
   const [confirmModal, setConfirmModal] = useState<{
     show: boolean;
     type: "leave" | "delete" | "archive" | "toggle-status" | null;
@@ -468,6 +478,56 @@ export default function GroupDetailClientPage({
                 </ListGroup.Item>
               )}
             </ListGroup>
+            {!group.is_archived && !group.is_open && (
+              <div className="p-3 d-flex align-items-center">
+                <div className="me-3">
+                  <RevealModal
+                    trigger={{
+                      type: "button",
+                      label: pick ? "View Your Pick" : "Reveal Your Pick",
+                      icon: <FaGift />,
+                      variant: "dark",
+                      size: "sm",
+                    }}
+                    groupId={groupId}
+                    leftToPick={Math.max(
+                      (group?.members_left_to_pick ?? 0) - 1,
+                      0
+                    )}
+                    pick={pick}
+                  />
+                </div>
+                {pick && (
+                  <div className="d-flex align-items-center gap-2">
+                    {pick.wishlist_id ? (
+                      <ViewWishlistFromPickModal
+                        trigger={{
+                          type: "button",
+                          label: "View Your Pick's Wishlist",
+                          icon: <FaHeart />,
+                          variant: "outline-dark",
+                          size: "sm",
+                        }}
+                        wishlistId={pick.wishlist_id}
+                      />
+                    ) : (
+                      <PingUserModal
+                        trigger={{
+                          type: "button",
+                          label: "Ping to Add Wishlist",
+                          variant: "outline-success",
+                          size: "sm",
+                          icon: <FaBell />,
+                        }}
+                        pickID={pick.pick_id}
+                        pingType="wishlist"
+                        modalSize="lg"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </Card>
         </Col>
       </Row>
@@ -485,8 +545,8 @@ export default function GroupDetailClientPage({
                 <div className="mb-4 pb-4 border-bottom">
                   <h6 className="fw-bold mb-2">Leave Group</h6>
                   <p className="text-muted mb-3">
-                    Remove yourself from this group. You won&lsquo;t be able to rejoin
-                    unless invited again by another member.
+                    Remove yourself from this group. You won&lsquo;t be able to
+                    rejoin unless invited again by another member.
                   </p>
                   <Button
                     variant="outline-danger"

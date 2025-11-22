@@ -9,3 +9,6 @@ export { CreateWishlistModal } from "@/components/modals/Wishlists/CreateWishlis
 export { AddWishlistItemModal } from "@/components/modals/Wishlists/AddWishlistItemModal/AddWishlistItemModal";
 export { EditWishlistItemModal } from "@/components/modals/Wishlists/EditWishlistItemModal/EditWishlistItemModal";
 export { ViewWishlistItemModal } from "@/components/modals/Wishlists/ViewWishlistItemModal/ViewWishlistItemModal";
+export { RevealModal } from "@/components/modals/RevealModal/RevealModal";
+export { PingUserModal } from "@/components/modals/PingUserModal";
+export { ViewWishlistFromPickModal } from "@/components/modals/Wishlists/ViewWishlistFromPickModal/ViewWishlistFromPickModal";

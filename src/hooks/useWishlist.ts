@@ -12,7 +12,7 @@ import { Wishlist } from "@/types/wishlist";
  * @example
  * const { wishlist, isLoading, error, mutateWishlist } = useWishlist(wishlistId);
  */
-export function useWishlist(wishlistId: string) {
+export function useWishlist(wishlistId?: string) {
   const { data: session } = useSession();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 

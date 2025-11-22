@@ -1,0 +1,157 @@
+.resultCard {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 24px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.introLabel {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #a0aec0;
+  margin-bottom: 1rem;
+}
+
+.revealedName {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+/* Address Box */
+.addressBox {
+  background: #fff;
+  border: 2px dashed #cbd5e0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.addressLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.addressText {
+  font-size: 1.1rem;
+  color: #2d3748;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.instructionText {
+  text-align: center;
+  color: #718096;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  /* MOBILE DEFAULT: Force exactly 3 columns */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+}
+
+.mysteryBox {
+  background: transparent;
+  border: none;
+  padding: 0;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  width: 100%;
+}
+
+.mysteryBox:hover {
+  transform: translateY(-8px) scale(1.1);
+  z-index: 10;
+}
+
+.mysteryBox:active {
+  transform: scale(0.9);
+}
+
+.mysteryBox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.giftIcon {
+  width: 100%;
+  height: auto;
+  max-width: 120px;
+
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15));
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Stagger animation for variety */
+.mysteryBox:nth-child(odd) .giftIcon {
+  animation-duration: 4.5s;
+}
+
+.mysteryBox:nth-child(3n) .giftIcon {
+  animation-duration: 3.8s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
