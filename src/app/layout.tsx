@@ -7,6 +7,8 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { InactivityProvider } from "@/context/InactivityProvider";
 import { auth } from "@/auth";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+
 const fontPoppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -20,6 +22,7 @@ const fontChristmas = Mountains_of_Christmas({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     default: "Noel - Secret Santa Made Magical",
     template: "%s | Noel",
@@ -31,7 +34,7 @@ export const metadata: Metadata = {
     title: "Noel - Secret Santa Made Magical",
     description:
       "Noel makes organising your Secret Santa gift exchange effortless, fun, and full of holiday cheer.",
-    url: process.env.NEXT_PUBLIC_BASE_URL,
+    url: BASE_URL,
     siteName: "Noel",
     locale: "en-UK",
     type: "website",
