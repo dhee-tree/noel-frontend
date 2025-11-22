@@ -19,11 +19,15 @@ export interface GroupPick {
  * @param groupId - UUID of the group
  * @param pickId - optional pick id to fetch a specific pick
  */
-export function useGroupPick(groupId: string | null | undefined| null) {
+export function useGroupPick(
+  groupId: string | null | undefined | null,
+  isOpen?: boolean
+) {
   const { data: session } = useSession();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const shouldFetch = !!session?.accessToken && !!apiUrl && !!groupId;
+  const shouldFetch =
+    !!session?.accessToken && !!apiUrl && !!groupId && isOpen === false;
   const endpoint = shouldFetch ? `${apiUrl}/api/groups/${groupId}/pick/` : null;
 
   const { data, error, isLoading, mutate } = useSWR<GroupPick | null>(
