@@ -1,5 +1,4 @@
 "use client";
-
 import useSWR from "swr";
 import { useSession } from "next-auth/react";
 import { swrFetcher } from "@/lib/swr-fetcher";
@@ -15,6 +14,7 @@ export interface Group {
   date_created?: string;
   date_updated?: string;
   member_count?: number;
+  members_left_to_pick?: number;
   
   assignment_reveal_date?: string | null;
   gift_exchange_deadline?: string | null;
