@@ -4,21 +4,21 @@ import {
   Container,
   Row,
   Col,
-  Card,
   Button,
-  Badge,
   Spinner,
   Alert,
   Form,
 } from "react-bootstrap";
 import {
-  FaUserCircle,
+  FaUser,
   FaEdit,
   FaTimes,
   FaCheck,
-  FaEnvelope,
-  FaCalendar,
   FaShieldAlt,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaVenusMars,
+  FaLock,
 } from "react-icons/fa";
 import { useProfile, useApiRequest } from "@/hooks";
 import { InputField, SelectField } from "@/components/forms";
@@ -54,7 +54,6 @@ export default function ProfileClientPage() {
     { value: "Prefer not to say", label: "Prefer not to say" },
   ];
 
-  // Parse address into components
   const parseAddress = (address?: string | null) => {
     if (!address) return { line1: "", city: "", country: "", postcode: "" };
     const parts = address.split(",").map((p) => p.trim());
@@ -89,7 +88,6 @@ export default function ProfileClientPage() {
 
   const onSubmitProfile = async (data: UpdateProfileForm) => {
     try {
-      // Concatenate address parts
       const addressParts = [
         data.address_line1?.trim(),
         data.city?.trim(),
@@ -118,8 +116,6 @@ export default function ProfileClientPage() {
 
       toast.success("Profile updated successfully!");
       await mutateProfile();
-
-      // Update the session with new profile data
       await update({
         user: {
           firstName: data.first_name.trim(),
@@ -130,9 +126,9 @@ export default function ProfileClientPage() {
       setIsEditMode(false);
     } catch (error) {
       console.error("Update profile error:", error);
-      const message =
-        error instanceof Error ? error.message : "Failed to update profile";
-      toast.error(message);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update profile"
+      );
     }
   };
 
@@ -151,11 +147,9 @@ export default function ProfileClientPage() {
 
   if (isLoading) {
     return (
-      <Container className="py-5">
-        <div className="text-center">
-          <Spinner animation="border" variant="primary" />
-          <p className="mt-3 text-muted">Loading profile...</p>
-        </div>
+      <Container className="py-5 text-center">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Loading profile...</p>
       </Container>
     );
   }
@@ -163,235 +157,229 @@ export default function ProfileClientPage() {
   if (error || !profile) {
     return (
       <Container className="py-5">
-        <Alert variant="danger">
-          Failed to load profile. Please try again later.
-        </Alert>
+        <Alert variant="danger">Failed to load profile.</Alert>
       </Container>
     );
   }
 
   return (
-    <Container className="py-4">
-      <Row className="justify-content-center">
-        <Col lg={8}>
-          {/* Profile Header */}
-          <Card className="mb-4 shadow-sm">
-            <Card.Body className="p-4">
-              <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4 gap-3">
-                <div className="d-flex align-items-start w-100">
-                  <div className={styles.avatarWrapper}>
-                    <FaUserCircle size={64} className="text-primary" />
-                  </div>
-                  <div className="ms-3 flex-grow-1 overflow-hidden">
-                    <h3 className="mb-1">
-                      {profile.first_name} {profile.last_name}
-                    </h3>
-                    <div className="d-flex flex-wrap align-items-center gap-2">
-                      <div className="d-flex align-items-center text-truncate">
-                        <FaEnvelope
-                          size={14}
-                          className="text-muted flex-shrink-0"
-                        />
-                        <span className="text-muted ms-2 text-truncate">
-                          {profile.email}
-                        </span>
-                      </div>
-                      {profile.is_verified && (
-                        <Badge
-                          bg="primary"
-                          className={`${styles.verifiedBadge} flex-shrink-0`}
-                        >
-                          <FaShieldAlt size={12} className="me-1" />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                {!isEditMode && (
-                  <Button
-                    variant="dark"
-                    size="sm"
-                    onClick={() => setIsEditMode(true)}
-                    className="flex-shrink-0"
-                  >
-                    <FaEdit className="me-1" />
-                    <span className="d-none d-sm-inline">Edit Profile</span>
-                    <span className="d-inline d-sm-none">Edit</span>
-                  </Button>
-                )}
-              </div>
+    <Container className={styles.container}>
+      <div className={styles.profileGrid}>
+        <div className={styles.identityCard}>
+          <div className={styles.avatarWrapper}>
+            <FaUser className={styles.avatarIcon} />
+          </div>
+          <h2 className={styles.userName}>
+            {profile.first_name} {profile.last_name}
+          </h2>
+          <div className={styles.userEmail}>{profile.email}</div>
 
-              {/* Joined Date */}
-              <div className="d-flex align-items-center text-muted mb-3">
-                <FaCalendar className="me-2" />
-                <small>Joined on {formatDate(profile.date_created)}</small>
-              </div>
+          <div className={styles.badges}>
+            {profile.is_verified && (
+              <span className={styles.verifiedBadge}>
+                <FaShieldAlt /> Verified
+              </span>
+            )}
+          </div>
 
-              {isEditMode ? (
-                /* Edit Mode */
-                <Form onSubmit={handleSubmitProfile(onSubmitProfile)}>
-                  <Row>
-                    <Col md={6}>
-                      <InputField
-                        name="first_name"
-                        label="First Name"
-                        type="text"
-                        register={registerProfile}
-                        error={errorsProfile.first_name}
-                        disabled={isSubmittingProfile}
-                        className="mb-3"
-                        isRequired
-                      />
-                    </Col>
-                    <Col md={6}>
-                      <InputField
-                        name="last_name"
-                        label="Last Name"
-                        type="text"
-                        register={registerProfile}
-                        error={errorsProfile.last_name}
-                        disabled={isSubmittingProfile}
-                        className="mb-3"
-                        isRequired
-                      />
-                    </Col>
-                  </Row>
+          {!isEditMode && (
+            <Button
+              variant="dark"
+              className="w-100"
+              onClick={() => setIsEditMode(true)}
+            >
+              <FaEdit className="me-2" /> Edit Profile
+            </Button>
+          )}
 
-                  <SelectField
-                    name="gender"
-                    label="Gender"
-                    control={controlProfile}
-                    options={genderOptions}
-                    error={errorsProfile.gender}
-                    placeholder="Select gender..."
-                    isSearchable={false}
-                    isClearable={true}
-                    className="mb-3"
-                  />
+          <div className={styles.joinDate}>
+            <FaCalendarAlt className="me-2" />
+            Member since {formatDate(profile.date_created)}
+          </div>
+        </div>
 
-                  <h6 className="mt-4 mb-3">Address (Optional)</h6>
-                  <InputField
-                    name="address_line1"
-                    label="Address Line 1"
-                    type="text"
-                    register={registerProfile}
-                    error={errorsProfile.address_line1}
-                    disabled={isSubmittingProfile}
-                    className="mb-3"
-                  />
-
-                  <Row>
-                    <Col md={6}>
-                      <InputField
-                        name="city"
-                        label="City"
-                        type="text"
-                        register={registerProfile}
-                        error={errorsProfile.city}
-                        disabled={isSubmittingProfile}
-                        className="mb-3"
-                      />
-                    </Col>
-                    <Col md={6}>
-                      <InputField
-                        name="postcode"
-                        label="Post Code"
-                        type="text"
-                        register={registerProfile}
-                        error={errorsProfile.postcode}
-                        disabled={isSubmittingProfile}
-                        className="mb-3"
-                      />
-                    </Col>
-                  </Row>
-
-                  <InputField
-                    name="country"
-                    label="Country"
-                    type="text"
-                    register={registerProfile}
-                    error={errorsProfile.country}
-                    disabled={isSubmittingProfile}
-                    className="mb-4"
-                  />
-
-                  <div className="d-flex gap-2">
-                    <Button
-                      type="submit"
-                      variant="success"
-                      disabled={isSubmittingProfile}
-                    >
-                      {isSubmittingProfile ? (
-                        <>
-                          <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            className="me-2"
-                          />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <FaCheck className="me-1" />
-                          Save Changes
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={handleCancelEdit}
-                      disabled={isSubmittingProfile}
-                    >
-                      <FaTimes className="me-1" />
-                      Cancel
-                    </Button>
-                  </div>
-                </Form>
-              ) : (
-                /* Display Mode */
-                <div>
-                  <Row className="mb-3">
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <span className="text-muted">First Name</span>
-                        <p className="mb-0 fw-medium">{profile.first_name}</p>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <span className="text-muted">Last Name</span>
-                        <p className="mb-0 fw-medium">{profile.last_name}</p>
-                      </div>
-                    </Col>
-                  </Row>
-
-                  <Row className="mb-3">
-                    <Col md={6}>
-                      <div className={styles.infoItem}>
-                        <span className="text-muted">Gender</span>
-                        <p className="mb-0 fw-medium">
-                          {profile.gender || "Not specified"}
-                        </p>
-                      </div>
-                    </Col>
-                  </Row>
-
-                  {profile.address && (
-                    <div className={styles.infoItem}>
-                      <span className="text-muted">Address</span>
-                      <p className="mb-0 fw-medium">{profile.address}</p>
-                    </div>
-                  )}
-                </div>
+        <div>
+          {/* 1. Personal Details Card */}
+          <div className={styles.detailsCard}>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.sectionTitle}>Personal Information</h3>
+              {isEditMode && (
+                <Button
+                  variant="link"
+                  className="text-muted p-0 text-decoration-none"
+                  onClick={handleCancelEdit}
+                >
+                  <FaTimes className="me-1" /> Cancel
+                </Button>
               )}
-            </Card.Body>
-          </Card>
+            </div>
 
-          <ChangePasswordSection />
-        </Col>
-      </Row>
+            {isEditMode ? (
+              <Form onSubmit={handleSubmitProfile(onSubmitProfile)}>
+                <Row>
+                  <Col md={6}>
+                    <InputField
+                      name="first_name"
+                      label="First Name"
+                      type="text"
+                      register={registerProfile}
+                      error={errorsProfile.first_name}
+                      disabled={isSubmittingProfile}
+                      className="mb-3"
+                      isRequired
+                    />
+                  </Col>
+                  <Col md={6}>
+                    <InputField
+                      name="last_name"
+                      label="Last Name"
+                      type="text"
+                      register={registerProfile}
+                      error={errorsProfile.last_name}
+                      disabled={isSubmittingProfile}
+                      className="mb-3"
+                      isRequired
+                    />
+                  </Col>
+                </Row>
+
+                <SelectField
+                  name="gender"
+                  label="Gender"
+                  control={controlProfile}
+                  options={genderOptions}
+                  error={errorsProfile.gender}
+                  placeholder="Select gender..."
+                  className="mb-3"
+                />
+
+                <div className={styles.formSectionTitle}>
+                  <FaMapMarkerAlt /> Shipping Address
+                </div>
+
+                <InputField
+                  name="address_line1"
+                  label="Address Line 1"
+                  type="text"
+                  register={registerProfile}
+                  error={errorsProfile.address_line1}
+                  disabled={isSubmittingProfile}
+                  className="mb-3"
+                />
+
+                <Row>
+                  <Col md={6}>
+                    <InputField
+                      name="city"
+                      label="City"
+                      type="text"
+                      register={registerProfile}
+                      error={errorsProfile.city}
+                      disabled={isSubmittingProfile}
+                      className="mb-3"
+                    />
+                  </Col>
+                  <Col md={6}>
+                    <InputField
+                      name="postcode"
+                      label="Post Code"
+                      type="text"
+                      register={registerProfile}
+                      error={errorsProfile.postcode}
+                      disabled={isSubmittingProfile}
+                      className="mb-3"
+                    />
+                  </Col>
+                </Row>
+
+                <InputField
+                  name="country"
+                  label="Country"
+                  type="text"
+                  register={registerProfile}
+                  error={errorsProfile.country}
+                  disabled={isSubmittingProfile}
+                  className="mb-4"
+                />
+
+                <div className={styles.buttonGroup}>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmittingProfile}
+                    className="px-4 fw-bold"
+                  >
+                    {isSubmittingProfile ? (
+                      <Spinner size="sm" animation="border" />
+                    ) : (
+                      <>
+                        <FaCheck className="me-2" /> Save Changes
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={handleCancelEdit}
+                    disabled={isSubmittingProfile}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </Form>
+            ) : (
+              <div className={styles.infoGrid}>
+                <div className={styles.infoBlock}>
+                  <span className={styles.label}>First Name</span>
+                  <span className={styles.value}>{profile.first_name}</span>
+                </div>
+                <div className={styles.infoBlock}>
+                  <span className={styles.label}>Last Name</span>
+                  <span className={styles.value}>{profile.last_name}</span>
+                </div>
+                <div className={styles.infoBlock}>
+                  <span className={styles.label}>Gender</span>
+                  <span className={styles.value}>
+                    {profile.gender ? (
+                      <>
+                        <FaVenusMars className="me-2 text-muted" />
+                        {profile.gender}
+                      </>
+                    ) : (
+                      <span className={styles.emptyValue}>Not specified</span>
+                    )}
+                  </span>
+                </div>
+                <div className={styles.infoBlock}>
+                  <span className={styles.label}>Address</span>
+                  <span className={styles.value}>
+                    {profile.address ? (
+                      <>
+                        <FaMapMarkerAlt className="me-2 text-muted" />
+                        {profile.address}
+                      </>
+                    ) : (
+                      <span className={styles.emptyValue}>
+                        No address set (Used for shipping gifts)
+                      </span>
+                    )}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.securityWrapper}>
+            <div className="p-4 border-bottom bg-light">
+              <h5 className="m-0 d-flex align-items-center gap-2">
+                <FaLock className="text-secondary" /> Security
+              </h5>
+            </div>
+            <div className="p-4">
+              <ChangePasswordSection />
+            </div>
+          </div>
+        </div>
+      </div>
     </Container>
   );
 }

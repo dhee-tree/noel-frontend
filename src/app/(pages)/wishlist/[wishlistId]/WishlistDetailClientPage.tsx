@@ -178,7 +178,7 @@ export default function WishlistDetailClientPage({
           <div className={styles.headerContent}>
             <div>
               <h1 className={styles.wishlistTitle}>
-                <FaGift className="me-3 text-primary" />
+                <FaGift className="me-3 text-info" />
                 {wishlist.name}
               </h1>
               <p className={styles.wishlistSubtitle}>
