@@ -12,6 +12,7 @@ type TextAreaFieldProps = {
   placeholder?: string;
   rows?: number;
   helpText?: string;
+  maxLength?: number;
   resize?: boolean; // Allow resize or not
 } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "rows">;
 
@@ -23,6 +24,7 @@ export const TextAreaField = ({
   placeholder,
   rows = 3,
   helpText,
+  maxLength = 100,
   resize = false,
   className,
   ...props
@@ -44,6 +46,7 @@ export const TextAreaField = ({
         {...register(name)}
         isInvalid={!!error}
         style={{ resize: resize ? "vertical" : "none" }}
+        maxLength={maxLength}
         {...filteredProps}
       />
       {helpText && !error && (

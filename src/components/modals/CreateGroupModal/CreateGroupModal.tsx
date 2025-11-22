@@ -214,7 +214,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             placeholder="e.g. Family Secret Santa 2025"
             autoFocus
             disabled={isSubmitting}
-            maxLength={100}
             className="mb-3"
           />
 
@@ -225,7 +224,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
             error={errors.description}
             placeholder="Add any rules, themes, or special instructions..."
             disabled={isSubmitting}
-            maxLength={500}
             rows={3}
             resize={false}
             helpText="Let members know what to expect"
@@ -249,6 +247,23 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               />
             )}
           />
+        </div>
+
+        {/* Exchange Details */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Exchange Details (Optional)</h6>
+          <InputField
+            name="exchangeLocation"
+            label="Exchange Location"
+            type="text"
+            register={register}
+            error={errors.exchangeLocation}
+            placeholder="e.g. Office Conference Room or Virtual/Mail"
+            disabled={isSubmitting}
+          />
+          <Form.Text className="text-muted">
+            Where gifts will be exchanged
+          </Form.Text>
         </div>
 
         {/* Budget Settings */}
@@ -345,26 +360,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
           </div>
         </div>
 
-        {/* Exchange Details */}
-        <div className="mb-4">
-          <h6 className="text-muted mb-3">Exchange Details (Optional)</h6>
-          <InputField
-            name="exchangeLocation"
-            label="Exchange Location"
-            type="text"
-            register={register}
-            error={errors.exchangeLocation}
-            placeholder="e.g. Office Conference Room or Virtual/Mail"
-            disabled={isSubmitting}
-            maxLength={200}
-          />
-          <Form.Text className="text-muted">
-            Where gifts will be exchanged
-          </Form.Text>
-        </div>
-
         {/* White Elephant Mode */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <h6 className="text-muted mb-3">
             Game Mode 🎮
             <OverlayTrigger
@@ -409,7 +406,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               someone else&apos;s gift
             </Form.Text>
           </Form.Group>
-        </div>
+        </div> */}
 
         {apiError && (
           <Alert variant="danger" className="mt-3">

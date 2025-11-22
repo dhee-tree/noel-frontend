@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useRef } from "react";
 import { Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
@@ -203,7 +202,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
             error={errors.groupName}
             placeholder="e.g., Office Secret Santa 2024"
             disabled={isSubmitting}
-            maxLength={100}
           />
 
           <TextAreaField
@@ -216,7 +214,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
             rows={3}
             resize={false}
             disabled={isSubmitting}
-            maxLength={500}
             className="mb-3"
           />
 
@@ -237,6 +234,23 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
               />
             )}
           />
+        </div>
+
+        {/* Exchange Details */}
+        <div className="mb-4">
+          <h6 className="text-muted mb-3">Exchange Details (Optional)</h6>
+          <InputField
+            name="exchangeLocation"
+            label="Exchange Location"
+            type="text"
+            register={register}
+            error={errors.exchangeLocation}
+            placeholder="e.g. Office Conference Room or Virtual/Mail"
+            disabled={isSubmitting}
+          />
+          <Form.Text className="text-muted d-block">
+            Where gifts will be exchanged
+          </Form.Text>
         </div>
 
         {/* Budget Settings */}
@@ -270,24 +284,6 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
               />
             </div>
           </div>
-        </div>
-
-        {/* Exchange Details */}
-        <div className="mb-4">
-          <h6 className="text-muted mb-3">Exchange Details (Optional)</h6>
-          <InputField
-            name="exchangeLocation"
-            label="Exchange Location"
-            type="text"
-            register={register}
-            error={errors.exchangeLocation}
-            placeholder="e.g. Office Conference Room or Virtual/Mail"
-            disabled={isSubmitting}
-            maxLength={200}
-          />
-          <Form.Text className="text-muted d-block">
-            Where gifts will be exchanged
-          </Form.Text>
         </div>
 
         {/* Important Dates */}
@@ -352,7 +348,7 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
         </div>
 
         {/* White Elephant Mode */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <h6 className="text-muted mb-3">
             Game Mode �
             <OverlayTrigger
@@ -396,7 +392,7 @@ export const EditGroupModal: React.FC<EditGroupModalProps> = ({
               someone else&apos;s gift
             </Form.Text>
           </Form.Group>
-        </div>
+        </div> */}
       </Form>
     </BaseModal>
   );

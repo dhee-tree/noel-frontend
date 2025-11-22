@@ -21,6 +21,7 @@ type InputFieldProps = {
   error?: FieldError;
   placeholder?: string;
   isRequired?: boolean;
+  maxLength?: number;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const InputField = ({
@@ -32,6 +33,7 @@ export const InputField = ({
   placeholder,
   isRequired = false,
   className,
+  maxLength = 50,
   ...props
 }: InputFieldProps) => {
   return (
@@ -45,6 +47,7 @@ export const InputField = ({
         placeholder={placeholder}
         {...register(name)}
         isInvalid={!!error}
+        maxLength={maxLength}
         {...Object.fromEntries(
           Object.entries(props).filter(([key]) => key !== "size")
         )}
