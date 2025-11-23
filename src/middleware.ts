@@ -47,14 +47,6 @@ export default auth((req) => {
     }
   }
 
-  // If it's not a public route and not a defined private route, require authentication
-  if (!isLoggedIn || hasSessionError) {
-    const callbackUrl = encodeURIComponent(nextUrl.pathname);
-    return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl)
-    );
-  }
-
   return NextResponse.next();
 });
 
