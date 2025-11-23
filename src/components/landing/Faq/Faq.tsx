@@ -7,17 +7,7 @@ const faqData = [
   {
     question: "Is Noel really free to use?",
     answer:
-      "Yes! Noel is completely free for basic Secret Santa exchanges. We may offer premium features in the future, but the core functionality will always be free.",
-  },
-  {
-    question: "Can I set rules like 'no spouse exchanges'?",
-    answer:
-      "Absolutely! When setting up your exchange, you can add restrictions to prevent certain people from being matched together. Our algorithm will respect all your rules.",
-  },
-  {
-    question: "What if someone doesn't buy a gift?",
-    answer:
-      "Noel sends automated reminders as your exchange date approaches. If someone still doesn't participate, the organizer can easily reassign their recipient.",
+      "Yes! Noel is completely free for basic Secret Santa exchanges.",
   },
   {
     question: "Can we do a virtual gift exchange?",

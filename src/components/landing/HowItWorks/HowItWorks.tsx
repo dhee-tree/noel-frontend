@@ -10,7 +10,7 @@ const stepsData = [
   {
     title: "Invite Participants",
     description:
-      "Invite your friends and family with a simple shareable link. They can join with just one click.",
+      "Invite your friends and family with a simple shareable link and join code. They can join with just one click.",
   },
   {
     title: "Share Wishlists",
@@ -20,7 +20,7 @@ const stepsData = [
   {
     title: "Let Noel Assign Santas",
     description:
-      "With one click, Noel's magic algorithm randomly and secretly assigns a Secret Santa to every participant.",
+      "With one click, Noel's magic algorithm randomly and secretly assigns a Secret Santa to every participant when they pick a box.",
   },
 ];
 

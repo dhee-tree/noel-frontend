@@ -7,14 +7,14 @@ const featuresData = [
     icon: Users,
     title: "Easy Group Setup",
     description:
-      "Create a group, set your rules, and invite participants with a simple, shareable link. Noel handles the rest.",
+      "Create a group, set your rules, and invite participants with a simple, shareable link.",
     color: "var(--primary-color)",
   },
   {
     icon: Shuffle,
     title: "Smart & Fair Matching",
     description:
-      "Our algorithm ensures everyone gets a random, secret match while respecting any exclusions you set (like no spouse exchanges).",
+      "Our algorithm ensures everyone gets a random, secret match while respecting your preferences.",
     color: "var(--secondary-color)",
   },
   {
@@ -42,7 +42,7 @@ const featuresData = [
     icon: Smartphone,
     title: "Mobile Friendly",
     description:
-      "Organize your gift exchange from any device, anywhere. Noel's experience is seamless on desktop and mobile.",
+      "Organise your gift exchange from any device, anywhere. Noel's experience is seamless on desktop and mobile.",
     color: "#db2777",
   },
 ];

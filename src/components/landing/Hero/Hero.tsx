@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/Button/Button";
-import { FcGoogle } from "react-icons/fc";
+import { Sparkles } from "lucide-react";
+import { FaGoogle } from "react-icons/fa";
 import styles from "./Hero.module.css";
 import { signIn } from "next-auth/react";
 
@@ -17,15 +18,17 @@ export const Hero = () => {
         </p>
         <div className={styles.buttonGroup}>
           <Button
-            variant="green"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            className={styles.googleButton}
           >
-            <FcGoogle size={24} />
-            Continue with Google
+            <FaGoogle size={26} />
+            <span>Continue with Google</span>
+            <Sparkles size={20} className="ml-2 opacity-80" />
           </Button>
 
-          <Button variant="primaryOutline" href="/register">
-            Get Started with Email
+          <Button href="/register" className={styles.emailButton}>
+            <span className={styles.emailText}>Sign up with Email</span>
+            <div className={styles.snowflake}>❅</div>
           </Button>
         </div>
       </div>

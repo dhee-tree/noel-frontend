@@ -71,3 +71,122 @@
     font-size: 1.25rem;
   }
 }
+
+.googleButton {
+  background: white !important;
+  color: #1f2937 !important;
+  border: 2px solid #e2e8f0 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.9rem 2rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.googleButton:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+  border-color: #34d399 !important;
+}
+
+.googleButton:active {
+  transform: translateY(-2px);
+}
+
+.googleButton::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.7s;
+}
+
+.googleButton:hover::before {
+  left: 100%;
+}
+
+.emailButton {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  color: white !important;
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.25) !important;
+  padding: 0.9rem 2rem !important;
+  font-weight: 600 !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.emailButton:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.35) !important;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.emailButton:active {
+  transform: translateY(-2px);
+}
+
+.emailButton::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateX(-50%);
+  animation: fall 2s linear forwards;
+  animation-delay: 0.3s;
+}
+
+.emailButton:hover::before {
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-20px) translateX(-50%);
+  }
+
+  100% {
+    transform: translateY(150px) translateX(-50%);
+  }
+}
+
+.emailText {
+  position: relative;
+  z-index: 10;
+}
+
+.snowflake {
+  margin-left: 0.5rem;
+  display: inline-block;
+  animation: gentleSpin 4s linear infinite;
+  font-size: 1.1em;
+}
+
+@keyframes gentleSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.emailButton::after {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 0.8rem;
+  opacity: 0.4;
+  animation: gentleSpin 6s linear infinite reverse;
+}

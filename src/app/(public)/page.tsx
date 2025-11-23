@@ -2,7 +2,7 @@ import {
   Hero,
   Features,
   HowItWorks,
-  Testimonials,
+  // Testimonials,
   Faq,
   Snowfall,
   Cta,
@@ -17,7 +17,7 @@ export default function LandingPage() {
         <Hero />
         <Features />
         <HowItWorks />
-        <Testimonials />
+        {/* <Testimonials /> */}
         <Faq />
         <Cta />
       </main>
