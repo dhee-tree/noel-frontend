@@ -1,26 +1,21 @@
 import React from "react";
 import { Button } from "@/components/ui/Button/Button";
 import styles from "./Cta.module.css";
+import { FaSleigh } from "react-icons/fa";
 
 export const Cta = () => {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <h2 className={styles.title}>Ready to Make This Christmas Magical?</h2>
+        <h2 className={styles.title}>Ready to Start the Tradition?</h2>
         <p className={styles.subtitle}>
-          Join thousands of happy families, friends, and coworkers who make
-          their holiday celebrations special with Noel.
+          No spreadsheets, no lost emails, just holiday magic. Join thousands of
+          happy families and friends using Noel today.
         </p>
-        <div className={styles.buttonGroup}>
-          <Button href="#" className={styles.lightButton}>
-            Start Your Exchange Free
-          </Button>
-          <Button
-            href="#"
-            variant="outline"
-            style={{ borderColor: "#fff", color: "#fff" }}
-          >
-            Learn More
+
+        <div className={styles.buttonWrapper}>
+          <Button href="/register" className={styles.ctaButton}>
+            Start Your Exchange Free <FaSleigh style={{ marginLeft: "10px" }} />
           </Button>
         </div>
       </div>

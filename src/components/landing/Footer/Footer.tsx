@@ -13,28 +13,24 @@ const footerLinks = [
   {
     title: "Product",
     links: [
-      { label: "Features", href: "#features" },
-      { label: "How It Works", href: "#how-it-works" },
-      { label: "Pricing", href: "#" },
-      { label: "Mobile Apps", href: "#" },
+      { label: "Features", href: "/#features" },
+      { label: "How It Works", href: "/#how-it-works" },
     ],
   },
   {
     title: "Resources",
     links: [
+      { label: "Gift Ideas", href: "#" },
       { label: "Blog", href: "#" },
       { label: "Help Center", href: "#" },
-      { label: "Gift Ideas", href: "#" },
-      { label: "Tutorials", href: "#" },
     ],
   },
   {
     title: "Company",
     links: [
       { label: "About Us", href: "#" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Contact Us", href: "#" },
+      { label: "Contact", href: "#" },
+      { label: "Careers", href: "#" },
     ],
   },
 ];
@@ -45,31 +41,35 @@ export const SiteFooter = () => {
       <div className={styles.grid}>
         <div className={styles.logoColumn}>
           <Link href="/" className={styles.logo}>
-            <Gift size={32} />
-            <span>Noel</span>
+            <Gift size={28} strokeWidth={2.5} />
+            <span className={styles.logoText}>Noel</span>
           </Link>
-          <p>Making holiday gift exchanges magical.</p>
+          <p className={styles.tagline}>
+            Making holiday gift exchanges effortless, magical, and fun for
+            everyone.
+          </p>
           <div className={styles.socials}>
-            <a href="#" aria-label="Facebook">
-              <FaFacebookF size={20} />
+            <a href="#" aria-label="Facebook" className={styles.socialLink}>
+              <FaFacebookF size={16} />
             </a>
-            <a href="#" aria-label="Twitter">
-              <FaTwitter size={20} />
+            <a href="#" aria-label="Twitter" className={styles.socialLink}>
+              <FaTwitter size={16} />
             </a>
-            <a href="#" aria-label="Instagram">
-              <FaInstagram size={20} />
+            <a href="#" aria-label="Instagram" className={styles.socialLink}>
+              <FaInstagram size={16} />
             </a>
-            <a href="#" aria-label="Pinterest">
-              <FaPinterest size={20} />
+            <a href="#" aria-label="Pinterest" className={styles.socialLink}>
+              <FaPinterest size={16} />
             </a>
           </div>
         </div>
+
         {footerLinks.map((column) => (
           <div key={column.title}>
             <h3 className={styles.columnTitle}>{column.title}</h3>
             <ul className={styles.linkList}>
               {column.links.map((link) => (
-                <li key={link.label} className={styles.link}>
+                <li key={link.label} className={styles.linkItem}>
                   <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
@@ -77,11 +77,19 @@ export const SiteFooter = () => {
           </div>
         ))}
       </div>
+
       <div className={styles.subFooter}>
-        <p>&copy; {new Date().getFullYear()} Noel. All rights reserved.</p>
-        <div className={styles.socials} style={{ marginTop: 0 }}>
-          <Link href="#">Privacy</Link>
-          <Link href="#">Terms</Link>
+        <p>© {new Date().getFullYear()} Noel. All rights reserved.</p>
+        <div className={styles.legalLinks}>
+          <Link href="#" className={styles.legalLink}>
+            Privacy Policy
+          </Link>
+          <Link href="#" className={styles.legalLink}>
+            Terms of Service
+          </Link>
+          <Link href="#" className={styles.legalLink}>
+            Cookie Policy
+          </Link>
         </div>
       </div>
     </footer>
