@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/Button/Button";
 import { Sparkles } from "lucide-react";
-import { FaGoogle } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import styles from "./Hero.module.css";
 import { signIn } from "next-auth/react";
 
@@ -21,7 +21,7 @@ export const Hero = () => {
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
             className={styles.googleButton}
           >
-            <FaGoogle size={26} />
+            <FcGoogle size={26} />
             <span>Continue with Google</span>
             <Sparkles size={20} className="ml-2 opacity-80" />
           </Button>
