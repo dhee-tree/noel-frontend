@@ -49,22 +49,9 @@ export const SiteHeader = () => {
         </nav>
 
         <div className={styles.authButtons}>
-          {pathname === "/" ? (
-            <>
-              <Button href="/login" variant="primaryOutline">
-                Login
-              </Button>
-              <Button href="/register" variant="primary">
-                Sign Up
-              </Button>
-            </>
-          ) : pathname === "/register" ? (
-            <Button href="/login" variant="primary">
+          {pathname === "/" && (
+            <Button href="/login" variant="primaryOutline">
               Login
-            </Button>
-          ) : (
-            <Button href="/register" variant="primary">
-              Sign Up
             </Button>
           )}
         </div>
@@ -117,36 +104,6 @@ export const SiteHeader = () => {
               </a>
             ))}
           </nav>
-
-          {/* Mobile Auth Buttons */}
-          <div className={styles.mobileAuthButtons}>
-            {pathname === "/" ? (
-              <>
-                <div onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button href="/login" variant="primaryOutline" className="w-100">
-                    Login
-                  </Button>
-                </div>
-                <div onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button href="/register" variant="primary" className="w-100">
-                    Sign Up
-                  </Button>
-                </div>
-              </>
-            ) : pathname === "/register" ? (
-              <div onClick={() => setIsMobileMenuOpen(false)}>
-                <Button href="/login" variant="primary" className="w-100">
-                  Login
-                </Button>
-              </div>
-            ) : (
-              <div onClick={() => setIsMobileMenuOpen(false)}>
-                <Button href="/register" variant="primary" className="w-100">
-                  Sign Up
-                </Button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </header>
