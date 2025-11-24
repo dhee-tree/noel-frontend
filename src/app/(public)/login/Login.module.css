@@ -1,0 +1,12 @@
+.forgotLink {
+    font-size: 0.9rem;
+    color: #718096;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.forgotLink:hover {
+    color: var(--bs-primary);
+    text-decoration: underline;
+}

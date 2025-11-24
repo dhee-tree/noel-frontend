@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import { InputField } from "@/components/forms/InputField";
 import { SelectField } from "@/components/forms/SelectField";
 import { apiRequest } from "@/lib/utils";
-import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import { Form, Container, Alert, Spinner } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
+import Link from "next/link";
+import authStyles from "@/components/auth/AuthLayout.module.css";
 import styles from "./Register.module.css";
 
 const genderOptions = [
@@ -78,48 +80,48 @@ export default function RegisterClientPage() {
   };
 
   return (
-    <Container className={styles.page}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Create Your Account</h1>
-        <Button
-          variant="success"
+    <Container className={authStyles.page}>
+      <div className={authStyles.card}>
+        <h1 className={authStyles.title}>Join the Party</h1>
+        <p className={authStyles.subtitle}>Create an account to get started</p>
+
+        <button
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          className="w-100 d-flex align-items-center justify-content-center gap-2"
+          className={authStyles.googleButton}
+          type="button"
         >
           <FcGoogle size={24} />
-          Sign Up with Google
-        </Button>
-        <div className={styles.divider}>OR</div>
+          <span>Sign up with Google</span>
+        </button>
+
+        <div className={authStyles.divider}>or sign up with email</div>
 
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row>
-            <Col sm={6}>
-              <InputField
-                name="firstName"
-                label="First Name"
-                register={register}
-                error={errors.firstName}
-                className="mb-3"
-              />
-            </Col>
-            <Col sm={6}>
-              <InputField
-                name="lastName"
-                label="Last Name"
-                register={register}
-                error={errors.lastName}
-                className="mb-3"
-              />
-            </Col>
-          </Row>
+          <div className={styles.formRow}>
+            <InputField
+              name="firstName"
+              label="First Name"
+              register={register}
+              error={errors.firstName}
+              placeholder="Santa"
+            />
+            <InputField
+              name="lastName"
+              label="Last Name"
+              register={register}
+              error={errors.lastName}
+              placeholder="Claus"
+            />
+          </div>
 
           <InputField
             name="email"
-            label="Email"
+            label="Email Address"
             type="email"
             register={register}
             error={errors.email}
             className="mb-3"
+            placeholder="santa@northpole.com"
           />
 
           <SelectField
@@ -132,37 +134,60 @@ export default function RegisterClientPage() {
             className="mb-3"
           />
 
-          <InputField
-            name="password"
-            label="Password"
-            type="password"
-            register={register}
-            error={errors.password}
-            className="mb-3"
-          />
-          <InputField
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            register={register}
-            error={errors.confirmPassword}
-          />
+          <div className={styles.formRow}>
+            <InputField
+              name="password"
+              label="Password"
+              type="password"
+              register={register}
+              error={errors.password}
+              placeholder="••••••••"
+            />
+            <InputField
+              name="confirmPassword"
+              label="Confirm Password"
+              type="password"
+              register={register}
+              error={errors.confirmPassword}
+              placeholder="••••••••"
+            />
+          </div>
 
           {apiError && (
-            <Alert variant="danger" className="mt-3">
+            <Alert variant="danger" className="mt-2">
               {apiError}
             </Alert>
           )}
 
-          <Button
-            variant="danger"
+          <button
             type="submit"
             disabled={isSubmitting}
-            className="w-100 mt-3"
+            className={authStyles.submitButton}
           >
-            {isSubmitting ? "Creating Account..." : "Create Account"}
-          </Button>
+            {isSubmitting ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Creating Account...
+              </>
+            ) : (
+              "Create Account"
+            )}
+          </button>
         </Form>
+
+        <div className={authStyles.footerText}>
+          Already have an account?{" "}
+          <Link href="/login" className={authStyles.link}>
+            Log in here
+          </Link>
+        </div>
       </div>
     </Container>
   );
