@@ -189,3 +189,32 @@
     overflow: hidden;
     /* Ensures child styling fits */
 }
+
+.preferencesWrapper {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    margin-top: 1.5rem;
+    scroll-margin-top: 2rem;
+}
+
+.sectionHeaderBar {
+    padding: 1.5rem;
+    border-bottom: 1px solid #edf2f7;
+    background: #f8fafc;
+}
+
+.sectionHeaderTitle {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.sectionContent {
+    padding: 1.5rem;
+}

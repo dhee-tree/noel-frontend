@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -19,10 +19,15 @@ import {
   FaCalendarAlt,
   FaVenusMars,
   FaLock,
+  FaEnvelopeOpenText,
 } from "react-icons/fa";
 import { useProfile, useApiRequest } from "@/hooks";
 import { InputField, SelectField } from "@/components/forms";
-import { ChangePasswordSection } from "@/components/profile/ChangePasswordSection";
+import {
+  ChangePasswordSection,
+  EmailPreferencesForm,
+} from "@/components/profile";
+import { Prefs } from "@/components/profile/EmailPreferencesForm/EmailPreferencesForm";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -47,6 +52,66 @@ export default function ProfileClientPage() {
   const { apiRequest } = useApiRequest();
   const { update } = useSession();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSavingPrefs, setIsSavingPrefs] = useState(false);
+
+  const [emailPrefs, setEmailPrefs] = useState<Prefs>({
+    allow_marketing: false,
+    allow_newsletter: false,
+    allow_product_updates: false,
+  });
+
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
+  const apiRequestRef = React.useRef(apiRequest);
+  useEffect(() => {
+    apiRequestRef.current = apiRequest;
+  }, [apiRequest]);
+
+  useEffect(() => {
+    if (!profile || prefsLoaded) return;
+
+    let cancelled = false;
+    const fetchPrefs = async () => {
+      try {
+        const res = await apiRequestRef.current(
+          "/api/profile/email-preferences/",
+          {
+            method: "GET",
+          }
+        );
+        if (!cancelled && res.ok) {
+          const data = await res.json();
+          setEmailPrefs(data);
+        }
+      } catch (err) {
+        if (!cancelled) console.error("Failed to load preferences", err);
+      } finally {
+        if (!cancelled) setPrefsLoaded(true);
+      }
+    };
+
+    fetchPrefs();
+    return () => {
+      cancelled = true;
+    };
+  }, [profile, prefsLoaded]);
+
+  const handleSavePrefs = async () => {
+    setIsSavingPrefs(true);
+    try {
+      const res = await apiRequest("/api/profile/email-preferences/", {
+        method: "PATCH",
+        body: emailPrefs,
+      });
+
+      if (!res.ok) throw new Error("Failed to update");
+      toast.success("Email preferences updated!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not save preferences.");
+    } finally {
+      setIsSavingPrefs(false);
+    }
+  };
 
   const genderOptions = [
     { value: "Male", label: "Male" },
@@ -369,13 +434,31 @@ export default function ProfileClientPage() {
           </div>
 
           <div className={styles.securityWrapper}>
-            <div className="p-4 border-bottom bg-light">
-              <h5 className="m-0 d-flex align-items-center gap-2">
+            <div className={styles.sectionHeaderBar}>
+              {" "}
+              <h5 className={styles.sectionHeaderTitle}>
                 <FaLock className="text-secondary" /> Security
               </h5>
             </div>
             <div className="p-4">
               <ChangePasswordSection />
+            </div>
+          </div>
+
+          <div className={styles.preferencesWrapper} id="email-preferences">
+            <div className={styles.sectionHeaderBar}>
+              <h5 className={styles.sectionHeaderTitle}>
+                <FaEnvelopeOpenText className="text-secondary" /> Email
+                Preferences
+              </h5>
+            </div>
+            <div className={styles.sectionContent}>
+              <EmailPreferencesForm
+                prefs={emailPrefs}
+                setPrefs={setEmailPrefs}
+                onSave={handleSavePrefs}
+                isSaving={isSavingPrefs}
+              />
             </div>
           </div>
         </div>
