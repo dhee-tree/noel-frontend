@@ -10,7 +10,9 @@ export const publicRoutes = [
   "/login",
   "/register",
   "/about",
-  "/faq"
+  "/faq",
+  "/reset-password",
+  "/reset-password/confirm",
 ];
 
 export const roleBasedRoutes: Record<string, UserRole[]> = {
@@ -20,6 +22,7 @@ export const roleBasedRoutes: Record<string, UserRole[]> = {
   "/dashboard": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
   "/groups": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
   "/wishlist": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
+  "/profile": ["USER", "ADMIN", "SUPPORT", "MAINTAINER"],
 };
 
 export type RoutePermissions = typeof roleBasedRoutes;
