@@ -3,12 +3,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 import { Gift } from "lucide-react";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaPinterest,
-} from "react-icons/fa";
+import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
 
 const footerLinks = [
   {
@@ -39,6 +34,12 @@ export const SiteFooter = () => {
     }
   };
 
+  const instagramUrl =
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com";
+  const facebookUrl =
+    process.env.NEXT_PUBLIC_FACEBOOK_URL || "https://facebook.com";
+  const twitterUrl = process.env.NEXT_PUBLIC_TWITTER_URL || "https://x.com";
+
   return (
     <footer className={styles.footer}>
       <div className={styles.grid}>
@@ -52,18 +53,33 @@ export const SiteFooter = () => {
             everyone.
           </p>
           <div className={styles.socials}>
-            <Link href="#" aria-label="Facebook" className={styles.socialLink}>
-              <FaFacebookF size={16} />
-            </Link>
-            <Link href="#" aria-label="Twitter" className={styles.socialLink}>
-              <FaTwitter size={16} />
-            </Link>
-            <Link href="#" aria-label="Instagram" className={styles.socialLink}>
+            <a
+              href={instagramUrl}
+              aria-label="Instagram"
+              className={styles.socialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaInstagram size={16} />
-            </Link>
-            <Link href="#" aria-label="Pinterest" className={styles.socialLink}>
-              <FaPinterest size={16} />
-            </Link>
+            </a>
+            <a
+              href={facebookUrl}
+              aria-label="Facebook"
+              className={styles.socialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaFacebookF size={16} />
+            </a>
+            <a
+              href={twitterUrl}
+              aria-label="Twitter"
+              className={styles.socialLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaTwitter size={16} />
+            </a>
           </div>
         </div>
 
