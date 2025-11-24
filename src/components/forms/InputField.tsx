@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
-import { Form } from "react-bootstrap";
+import React, { useState } from "react";
+import { Form, InputGroup } from "react-bootstrap";
 import { UseFormRegister, FieldError } from "react-hook-form";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 type InputFieldProps = {
   name: string;
@@ -36,25 +37,61 @@ export const InputField = ({
   maxLength = 50,
   ...props
 }: InputFieldProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isPasswordField = type === "password";
+
+  const renderType = isPasswordField
+    ? showPassword
+      ? "text"
+      : "password"
+    : type;
+
   return (
     <Form.Group controlId={name} className={className}>
-      <Form.Label>
-        {label}
-        {isRequired && <span className="text-danger"> *</span>}
-      </Form.Label>
-      <Form.Control
-        type={type}
-        placeholder={placeholder}
-        {...register(name)}
-        isInvalid={!!error}
-        maxLength={maxLength}
-        {...Object.fromEntries(
-          Object.entries(props).filter(([key]) => key !== "size")
+      {label && (
+        <Form.Label>
+          {label} {isRequired && <span className="text-danger">*</span>}
+        </Form.Label>
+      )}
+
+      <InputGroup hasValidation>
+        <Form.Control
+          type={renderType}
+          placeholder={placeholder}
+          {...register(name)}
+          isInvalid={!!error}
+          maxLength={maxLength}
+          style={
+            isPasswordField ? { borderRight: "none", zIndex: 0 } : undefined
+          }
+          {...Object.fromEntries(
+            Object.entries(props).filter(([key]) => key !== "size")
+          )}
+        />
+
+        {isPasswordField && (
+          <InputGroup.Text
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              cursor: "pointer",
+              backgroundColor: "#fff",
+              borderLeft: "none",
+              borderColor: error ? "#dc3545" : "#dee2e6",
+            }}
+          >
+            {showPassword ? (
+              <FaEyeSlash className="text-muted" />
+            ) : (
+              <FaEye className="text-muted" />
+            )}
+          </InputGroup.Text>
         )}
-      />
-      <Form.Control.Feedback type="invalid">
-        {error?.message}
-      </Form.Control.Feedback>
+
+        <Form.Control.Feedback type="invalid">
+          {error?.message}
+        </Form.Control.Feedback>
+      </InputGroup>
     </Form.Group>
   );
 };
