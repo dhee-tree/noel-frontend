@@ -13,6 +13,11 @@ export const publicRoutes = [
   "/faq",
   "/reset-password",
   "/reset-password/confirm",
+  "/terms",
+  "/about",
+  "/privacy",
+  "/cookies",
+  "/gift-ideas",
 ];
 
 export const roleBasedRoutes: Record<string, UserRole[]> = {

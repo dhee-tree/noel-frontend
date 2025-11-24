@@ -6,8 +6,11 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { InactivityProvider } from "@/context/InactivityProvider";
 import { auth } from "@/auth";
+import { CookieConsent } from "@/components/cookies/CookieConsent";
+import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
 
 const fontPoppins = Poppins({
   subsets: ["latin"],
@@ -58,6 +61,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <GoogleTagManager gtmId={GTM_ID} />
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
@@ -66,8 +70,20 @@ export default async function RootLayout({
         )}
         suppressHydrationWarning
       >
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+
         <AuthProvider session={session}>
-          <InactivityProvider>{children}</InactivityProvider>
+          <InactivityProvider>
+            {children}
+            <CookieConsent />
+          </InactivityProvider>
         </AuthProvider>
       </body>
     </html>

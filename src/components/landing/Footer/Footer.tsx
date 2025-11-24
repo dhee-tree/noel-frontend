@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import styles from "./Footer.module.css";
@@ -19,23 +20,25 @@ const footerLinks = [
   },
   {
     title: "Resources",
-    links: [
-      { label: "Gift Ideas", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Help Center", href: "#" },
-    ],
+    links: [{ label: "Gift Ideas", href: "/gift-ideas" }],
   },
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "#" },
-      { label: "Contact", href: "#" },
-      { label: "Careers", href: "#" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];
 
 export const SiteFooter = () => {
+  const openCookieSettings = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("open-cookie-settings"));
+    }
+  };
+
   return (
     <footer className={styles.footer}>
       <div className={styles.grid}>
@@ -49,18 +52,18 @@ export const SiteFooter = () => {
             everyone.
           </p>
           <div className={styles.socials}>
-            <a href="#" aria-label="Facebook" className={styles.socialLink}>
+            <Link href="#" aria-label="Facebook" className={styles.socialLink}>
               <FaFacebookF size={16} />
-            </a>
-            <a href="#" aria-label="Twitter" className={styles.socialLink}>
+            </Link>
+            <Link href="#" aria-label="Twitter" className={styles.socialLink}>
               <FaTwitter size={16} />
-            </a>
-            <a href="#" aria-label="Instagram" className={styles.socialLink}>
+            </Link>
+            <Link href="#" aria-label="Instagram" className={styles.socialLink}>
               <FaInstagram size={16} />
-            </a>
-            <a href="#" aria-label="Pinterest" className={styles.socialLink}>
+            </Link>
+            <Link href="#" aria-label="Pinterest" className={styles.socialLink}>
               <FaPinterest size={16} />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -81,15 +84,29 @@ export const SiteFooter = () => {
       <div className={styles.subFooter}>
         <p>© {new Date().getFullYear()} Noel. All rights reserved.</p>
         <div className={styles.legalLinks}>
-          <Link href="#" className={styles.legalLink}>
+          <Link href="/privacy" className={styles.legalLink}>
             Privacy Policy
           </Link>
-          <Link href="#" className={styles.legalLink}>
+          <Link href="/terms" className={styles.legalLink}>
             Terms of Service
           </Link>
-          <Link href="#" className={styles.legalLink}>
+
+          <Link href="/cookies" className={styles.legalLink}>
             Cookie Policy
           </Link>
+
+          <button
+            onClick={openCookieSettings}
+            className={styles.legalLink}
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+            }}
+          >
+            Manage Cookies
+          </button>
         </div>
       </div>
     </footer>
