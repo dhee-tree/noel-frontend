@@ -9,8 +9,9 @@ import { usePathname } from "next/navigation";
 const navLinks = [
   { href: "/#features", label: "Features" },
   { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#testimonials", label: "Stories" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export const SiteHeader = () => {
@@ -57,9 +58,9 @@ export const SiteHeader = () => {
         {/* Desktop Navigation */}
         <nav className={styles.desktopNav}>
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className={styles.navLink}>
+            <Link key={link.href} href={link.href} className={styles.navLink}>
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -121,14 +122,14 @@ export const SiteHeader = () => {
 
           <nav className={styles.mobileNavLinks}>
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className={styles.mobileNavLink}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-4 d-flex flex-column gap-3">
               <Button
