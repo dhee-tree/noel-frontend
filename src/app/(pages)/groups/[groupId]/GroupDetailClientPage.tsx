@@ -41,6 +41,7 @@ import {
   ViewWishlistFromPickModal,
 } from "@/components/modals";
 import { toast } from "react-toastify";
+import Link from "next/link";
 import styles from "./GroupDetailClientPage.module.css";
 
 interface Member {
@@ -114,9 +115,7 @@ export default function GroupDetailClientPage({
           break;
         case "toggle-status":
           endpoint = `/api/groups/${groupId}/toggle-status/`;
-          successMessage = `Group is now ${
-            group?.is_open ? "Closed" : "Open"
-          }`;
+          successMessage = `Group is now ${group?.is_open ? "Closed" : "Open"}`;
           break;
       }
 
@@ -205,7 +204,7 @@ export default function GroupDetailClientPage({
 
   return (
     <Container className={styles.container}>
-      <a
+      <Link
         href="#"
         onClick={(e) => {
           e.preventDefault();
@@ -214,7 +213,7 @@ export default function GroupDetailClientPage({
         className={styles.backButton}
       >
         <FaArrowLeft className="me-2" /> Back to Groups
-      </a>
+      </Link>
 
       {/* --- Hero Section --- */}
       <div className={styles.heroCard}>
@@ -310,10 +309,7 @@ export default function GroupDetailClientPage({
                   className: "px-4 py-2 fw-bold shadow-sm",
                 }}
                 groupId={groupId}
-                leftToPick={Math.max(
-                  (group?.members_left_to_pick ?? 0) - 1,
-                  0
-                )}
+                leftToPick={Math.max((group?.members_left_to_pick ?? 0) - 1, 0)}
                 pick={pick}
               />
             </div>
@@ -427,7 +423,10 @@ export default function GroupDetailClientPage({
                           placement="top"
                           overlay={<Tooltip>Group Organiser</Tooltip>}
                         >
-                          <span className="text-warning ms-1" style={{ cursor: 'help' }}>
+                          <span
+                            className="text-warning ms-1"
+                            style={{ cursor: "help" }}
+                          >
                             <FaCrown size={12} />
                           </span>
                         </OverlayTrigger>
