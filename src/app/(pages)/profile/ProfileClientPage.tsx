@@ -305,7 +305,7 @@ export default function ProfileClientPage() {
                 <div className={styles.buttonGroup}>
                   <Button
                     type="submit"
-                    variant="primary"
+                    variant="success"
                     disabled={isSubmittingProfile}
                     className="px-4 fw-bold"
                   >

@@ -118,8 +118,8 @@ export const CookieConsent = () => {
                 <FaCookieBite /> We value your privacy
               </div>
               <p>
-                We use cookies to enhance your experience, analyze site traffic,
-                and deliver personalized content.
+                We use cookies to enhance your experience, analyse site traffic,
+                and deliver personalised content.
               </p>
             </div>
             <div className={styles.actions}>
@@ -181,7 +181,7 @@ export const CookieConsent = () => {
               <div>
                 <strong>Marketing</strong>
                 <div className="text-muted small">
-                  Google Ads & Personalization
+                  Google Ads & Personalisation
                 </div>
               </div>
               <Form.Check

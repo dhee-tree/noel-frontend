@@ -189,7 +189,7 @@ export default function GiftIdeasClientPage() {
         <div className={styles.disclaimer}>
           <small>
             Note: Links direct to external search results. Prices are estimates
-            and subject to change. As an Amazon Associate, Noel earns from
+            and subject to change. As an Amazon Associate, Noel may earn from
             qualifying purchases.
           </small>
         </div>

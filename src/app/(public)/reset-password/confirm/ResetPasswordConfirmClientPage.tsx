@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Container, Form, Spinner } from "react-bootstrap";
-import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -9,7 +8,7 @@ import {
   type ResetPasswordConfirmForm,
 } from "@/lib/validators/auth";
 import { InputField } from "@/components/forms/InputField";
-import { useApiRequest } from "@/hooks/useApiRequest";
+import { useApiRequest } from "@/hooks";
 import Link from "next/link";
 import { SearchParam } from "@/lib/search-param";
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
@@ -49,8 +48,7 @@ export default function ResetPasswordConfirmClientPage() {
     };
 
     validateLink();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uid, token]);
+  }, [uid, token, apiRequest]);
 
   const {
     register,
@@ -74,17 +72,15 @@ export default function ResetPasswordConfirmClientPage() {
       });
 
       if (res.ok) {
-        toast.success("Password reset successfully!");
         setIsSubmitted(true);
       } else {
         const json = await res.json().catch(() => null);
         const msg =
           json?.detail || json?.message || "Failed to reset password.";
-        toast.error(msg);
+        console.error(msg);
       }
     } catch (err) {
       console.error("Reset confirm error:", err);
-      toast.error("Network error while resetting password.");
     }
   };
 

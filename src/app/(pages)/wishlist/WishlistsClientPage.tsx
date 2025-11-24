@@ -122,7 +122,7 @@ export default function WishlistsClientPage() {
                 You need to join a group before creating a wishlist.
               </p>
               <Button
-                variant="outline-primary"
+                variant="outline-success"
                 onClick={() => router.push("/groups")}
               >
                 Browse Groups
