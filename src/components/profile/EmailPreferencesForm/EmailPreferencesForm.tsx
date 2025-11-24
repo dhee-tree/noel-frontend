@@ -95,7 +95,7 @@ export const EmailPreferencesForm: React.FC<Props> = ({
       </div>
 
       <Button
-        variant="danger"
+        variant="success"
         className="w-100 mt-3 fw-bold"
         onClick={onSave}
         disabled={isSaving}

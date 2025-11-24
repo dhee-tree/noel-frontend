@@ -7,7 +7,7 @@ const faqData = [
   {
     question: "How does Noel work?",
     answer:
-      "NOEL allows you to create a group and invite your family and friends to join. Once everyone has joined, you can close the group which will allow the other members to pick a wrapped gift box. Once anyone picks a gift box they will be assigned a person to buy a gift for. Once everyone has picked a gift box.",
+      "NOEL enables you to create a group and invite your family and friends to join. Once everyone has joined, you can close the group, allowing each member to select a wrapped gift box. When someone picks a gift box, they will be assigned a person for whom to buy a gift. Once everyone has chosen their gift boxes, the gift exchange can begin, and each person will know who they are gifting.",
   },
   {
     question: "Is Noel really free to use?",

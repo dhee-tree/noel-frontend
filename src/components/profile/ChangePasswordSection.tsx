@@ -88,10 +88,12 @@ export const ChangePasswordSection: React.FC = () => {
           onClick={() => setShowPasswordSection(!showPasswordSection)}
         >
           <div className="d-flex align-items-center">
-            <FaLock className="me-2" />
+            <FaLock className="me-2 text-secondary" />
             <h5 className="mb-0">Change Password</h5>
           </div>
-          <span>{showPasswordSection ? "▲" : "▼"}</span>
+          <span className="text-secondary">
+            {showPasswordSection ? "▲" : "▼"}
+          </span>
         </Button>
 
         <Collapse in={showPasswordSection}>

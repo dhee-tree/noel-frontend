@@ -435,7 +435,6 @@ export default function ProfileClientPage() {
 
           <div className={styles.securityWrapper}>
             <div className={styles.sectionHeaderBar}>
-              {" "}
               <h5 className={styles.sectionHeaderTitle}>
                 <FaLock className="text-secondary" /> Security
               </h5>

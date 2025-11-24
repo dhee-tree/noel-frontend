@@ -13,6 +13,7 @@ import Link from "next/link";
 import { SearchParam } from "@/lib/search-param";
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 import authStyles from "@/components/auth/AuthLayout.module.css";
+import { toast } from "react-toastify";
 
 export default function ResetPasswordConfirmClientPage() {
   const uid = SearchParam("uid") || "";
@@ -77,7 +78,7 @@ export default function ResetPasswordConfirmClientPage() {
         const json = await res.json().catch(() => null);
         const msg =
           json?.detail || json?.message || "Failed to reset password.";
-        console.error(msg);
+        toast.error(msg);
       }
     } catch (err) {
       console.error("Reset confirm error:", err);
