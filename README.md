@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Noel - Frontend
 
-## Getting Started
+The frontend application for the Noel, a modern Secret Santa platform. Built with Next.js, this application provides a responsive and interactive user interface for managing Secret Santa groups, wishlists, and gift exchanges.
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Frontend
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: 
+  - [React Bootstrap](https://react-bootstrap.github.io/) for layout and components
+  - CSS Modules for custom styling
+  - [React Icons](https://react-icons.github.io/react-icons/) for iconography
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/) (v5)
+  - Google OAuth Provider
+  - Credentials Provider (Email/Password)
+  - JWT Session Strategy
+- **State Management & Data Fetching**: 
+  - [SWR](https://swr.vercel.app/) for data fetching and caching
+  - React Context for global UI state (e.g., Inactivity Timer)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/) validation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Backend (Integration)
+- **API**: Django REST Framework (DRF)
+- **Database**: PostgreSQL
+- **Containerization**: Docker & Docker Compose
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔐 Authentication & Security
+- **Secure Login**: Support for both Email/Password and Google Sign-In.
+- **Session Management**: 
+  - JWT-based sessions with automatic token refreshing.
+  - Inactivity timer that prompts users to stay logged in or auto-logs them out after 1 hour of inactivity.
+  - Redirects preserve query parameters and URL hashes (e.g., `#email-preferences`) to ensure users land exactly where they intended after logging in.
 
-## Learn More
+### 🎁 Group Management
+- **Create & Join Groups**: Users can easily create new Secret Santa groups or join existing ones via code.
+- **Auto-Join Links**: Shareable links (e.g., `?join=CODE`) allow users to automatically join a group upon clicking, even if they need to log in or register first.
+- **Social Sharing**: Integrated sharing modal to easily send group invite links via WhatsApp, Facebook, and SnapChat.
 
-To learn more about Next.js, take a look at the following resources:
+### 👤 User Profile
+- **Profile Management**: Users can update their personal details, shipping address, and password.
+- **Email Preferences**: Granular control over email notifications (marketing, newsletter, product updates), managed via a dedicated section in the profile.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/dhee-tree/noel-frontend.git
+   cd noel-frontend
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Environment Setup**
+   Create a `.env.local` file in the root directory and configure the following variables:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   AUTH_SECRET=your_auth_secret
+   AUTH_GOOGLE_ID=your_google_client_id
+   AUTH_GOOGLE_SECRET=your_google_client_secret
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the app**
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
