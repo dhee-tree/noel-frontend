@@ -32,12 +32,12 @@ export default function EmailPreferencesPage() {
 
     const fetchPrefs = async () => {
       try {
-        const res = await apiRequest(
+        const response = await apiRequest(
           `/api/profile/email-preferences/?token=${token}`,
           { method: "GET" }
         );
-        if (!res.ok) setError(generic_error_msg);
-        const data = await res.json();
+        if (!response.ok) setError(generic_error_msg);
+        const data = await response.json();
         setPrefs(data);
       } catch (err) {
         console.error("Error fetching email preferences:", err);
@@ -53,12 +53,12 @@ export default function EmailPreferencesPage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const res = await apiRequest(
+      const response = await apiRequest(
         `/api/profile/email-preferences/?token=${token}`,
         { method: "PATCH", body: prefs }
       );
 
-      if (!res.ok) throw new Error("Failed to update");
+      if (!response.ok) throw new Error("Failed to update");
       toast.success("Preferences updated!");
     } catch (err) {
       console.error("Error saving email preferences:", err);

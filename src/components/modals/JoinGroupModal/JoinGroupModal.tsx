@@ -111,10 +111,10 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
           required
           autoFocus
           disabled={loading}
-          maxLength={20}
+          maxLength={6}
         />
         <Form.Text className="text-muted">
-          Ask the group admin for the code.
+          Ask a group member for the code.
         </Form.Text>
       </Form>
     </BaseModal>

@@ -25,6 +25,7 @@ import {
   FaBell,
   FaHeart,
   FaCrown,
+  FaShareAlt,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import {
@@ -39,6 +40,7 @@ import {
   RevealModal,
   PingUserModal,
   ViewWishlistFromPickModal,
+  ShareGroupModal,
 } from "@/components/modals";
 import { toast } from "react-toastify";
 import Link from "next/link";
@@ -291,9 +293,22 @@ export default function GroupDetailClientPage({
               <strong className="h2 d-block mb-1">{group.group_code}</strong>
               <span className="text-muted small">Group Code</span>
             </div>
-            <Button onClick={handleCopyCode} variant="primary" size="sm">
-              <FaCopy className="me-2" /> Copy Code
-            </Button>
+            <div className="d-flex gap-2 justify-content-center">
+              <Button onClick={handleCopyCode} variant="primary" size="sm">
+                <FaCopy className="me-2" /> Copy Code
+              </Button>
+              <ShareGroupModal
+                groupCode={group.group_code || ""}
+                groupName={group.group_name || "Group"}
+                trigger={{
+                  type: "button",
+                  label: "Share",
+                  icon: <FaShareAlt />,
+                  variant: "outline-primary",
+                  size: "sm",
+                }}
+              />
+            </div>
           </div>
         ) : (
           <div className={styles.actionCard}>
