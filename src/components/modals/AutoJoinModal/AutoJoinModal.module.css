@@ -1,0 +1,39 @@
+.statusContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+.iconWrapper {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.successIcon {
+    color: #198754;
+}
+
+.errorIcon {
+    color: #dc3545;
+}
+
+.message {
+    font-size: 1.1rem;
+    color: #495057;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+.codeBadge {
+    background: #f8f9fa;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-family: monospace;
+    font-weight: bold;
+    border: 1px solid #dee2e6;
+    color: #212529;
+}

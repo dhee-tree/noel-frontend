@@ -13,3 +13,4 @@ export { RevealModal } from "@/components/modals/RevealModal/RevealModal";
 export { PingUserModal } from "@/components/modals/PingUserModal";
 export { ViewWishlistFromPickModal } from "@/components/modals/Wishlists/ViewWishlistFromPickModal/ViewWishlistFromPickModal";
 export { ShareGroupModal } from "@/components/modals/ShareGroupModal/ShareGroupModal";
+export { AutoJoinModal } from "@/components/modals/AutoJoinModal/AutoJoinModal";
