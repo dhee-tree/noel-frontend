@@ -17,7 +17,7 @@ type User = NextAuthUser & {
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/token/refresh/`;
-    
+
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,11 +31,16 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     }
 
     const refreshedTokens = await response.json();
-    
+
     if (!response.ok) {
       // If token is blacklisted or invalid, user needs to re-login
-      if (refreshedTokens.code === 'token_not_valid' || response.status === 401) {
-        console.error("Refresh token invalid or blacklisted. User needs to re-authenticate.");
+      if (
+        refreshedTokens.code === "token_not_valid" ||
+        response.status === 401
+      ) {
+        console.error(
+          "Refresh token invalid or blacklisted. User needs to re-authenticate."
+        );
         return { ...token, error: "RefreshTokenExpired" };
       }
       throw refreshedTokens;
@@ -44,7 +49,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     return {
       ...token,
       accessToken: refreshedTokens.access,
-      accessTokenExpires: Date.now() + 15 * 60 * 1000, // 15 minutes
+      accessTokenExpires: Date.now() + 2 * 60 * 60 * 1000, // 2 hours
     };
   } catch (error) {
     console.error("Error refreshing access token:", error);
@@ -106,7 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 24 * 60 * 60 }, // 1 day
   callbacks: {
     async jwt({ token, user, account, trigger, session }) {
       // Handle session updates from client-side update() calls
@@ -148,7 +153,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.email = backendData.user.email;
             token.role = backendData.user.role;
             token.is_verified = backendData.user.is_verified ?? true;
-            token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
+            token.accessTokenExpires = Date.now() + 2 * 60 * 60 * 1000;
           } catch (error) {
             console.error("Google Sign-In Callback Error:", error);
             token.error = "GoogleSignInError";
@@ -168,7 +173,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.email = user.email;
           token.role = (user as User).role;
           token.is_verified = (user as User).is_verified;
-          token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
+          token.accessTokenExpires = Date.now() + 2 * 60 * 60 * 1000;
         }
       }
 

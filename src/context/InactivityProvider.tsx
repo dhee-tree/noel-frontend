@@ -38,7 +38,8 @@ export const InactivityProvider = ({
   }, [showModal]);
 
   const handleLogout = useCallback(() => {
-    signOut({ callbackUrl: "/login" });
+    const callbackUrl = window.location.href;
+    signOut({ callbackUrl });
   }, []);
 
   const clearTimers = useCallback(() => {
