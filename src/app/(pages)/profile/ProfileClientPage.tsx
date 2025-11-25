@@ -95,6 +95,18 @@ export default function ProfileClientPage() {
     };
   }, [profile, prefsLoaded]);
 
+  useEffect(() => {
+    if (!isLoading && profile && window.location.hash) {
+      const id = window.location.hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    }
+  }, [isLoading, profile]);
+
   const handleSavePrefs = async () => {
     setIsSavingPrefs(true);
     try {
