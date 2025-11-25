@@ -19,14 +19,13 @@ import {
   CreateGroupModal,
   JoinGroupModal,
   ConfirmModal,
+  AutoJoinModal,
 } from "@/components/modals";
 import { toast } from "react-toastify";
 import styles from "./GroupsClientPage.module.css";
-import { useSession } from "next-auth/react";
 
 export default function GroupsClientPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const { activeGroups, archivedGroups, isLoading, mutateGroups } =
     useUserGroups();
   const { apiRequest } = useApiRequest();
@@ -47,19 +46,15 @@ export default function GroupsClientPage() {
 
   useEffect(() => {
     const fetchOwnership = async () => {
-      if (!session?.accessToken) return;
       const allGroups = [...activeGroups, ...archivedGroups];
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
       for (const group of allGroups) {
         if (ownershipMap.has(group.group_id)) continue;
         try {
-          const response = await fetch(
-            `${apiUrl}/api/groups/${group.group_id}/is-owner/`,
+          const response = await apiRequest(
+            `/api/groups/${group.group_id}/is-owner/`,
             {
-              headers: {
-                Authorization: `Bearer ${session.accessToken}`,
-              },
+              method: "GET",
             }
           );
           if (response.ok) {
@@ -77,8 +72,8 @@ export default function GroupsClientPage() {
       }
     };
     fetchOwnership();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeGroups, archivedGroups, session?.accessToken]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeGroups, archivedGroups, apiRequest]);
 
   // Filter groups
   const filteredActiveGroups = useMemo(() => {
@@ -398,6 +393,7 @@ export default function GroupsClientPage() {
         variant={confirmGroupState.isOpen ? "danger" : "success"}
         isLoading={isStatusLoading}
       />
+      <AutoJoinModal onSuccess={mutateGroups} />
     </Container>
   );
 }

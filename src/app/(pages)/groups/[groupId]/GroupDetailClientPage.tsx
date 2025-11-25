@@ -463,18 +463,18 @@ export default function GroupDetailClientPage({
       </div>
 
       {/* --- Danger Zone (Owner Only) --- */}
-      {isOwner && (
-        <div className={styles.dangerZone}>
-          <h5 className="mb-3 fw-bold text-secondary">Group Management</h5>
-          <div className={styles.dangerGrid}>
-            <Button
-              variant="outline-secondary"
-              onClick={handleLeaveGroup}
-              disabled={isActionLoading}
-              className="d-flex align-items-center justify-content-center gap-2"
-            >
-              <FaSignOutAlt /> Leave Group
-            </Button>
+      <div className={styles.dangerZone}>
+        <h5 className="mb-3 fw-bold text-secondary">Group Management</h5>
+        <div className={styles.dangerGrid}>
+          <Button
+            variant="outline-secondary"
+            onClick={handleLeaveGroup}
+            disabled={isActionLoading}
+            className="d-flex align-items-center justify-content-center gap-2"
+          >
+            <FaSignOutAlt /> Leave Group
+          </Button>
+          {isOwner && (
             <Button
               variant="outline-danger"
               onClick={handleDeleteGroup}
@@ -483,9 +483,9 @@ export default function GroupDetailClientPage({
             >
               <FaTrash /> Delete Group
             </Button>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* --- Modals (Logic remains unchanged) --- */}
       {confirmModal.type === "leave" && (
