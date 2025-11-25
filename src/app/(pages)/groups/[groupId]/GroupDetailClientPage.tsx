@@ -324,7 +324,11 @@ export default function GroupDetailClientPage({
                   className: "px-4 py-2 fw-bold shadow-sm",
                 }}
                 groupId={groupId}
-                leftToPick={Math.max((group?.members_left_to_pick ?? 0) - 1, 0)}
+                leftToPick={
+                  (group?.members_left_to_pick ?? 0) > 1
+                    ? (group?.members_left_to_pick ?? 0) - 1
+                    : group?.members_left_to_pick ?? 0
+                }
                 pick={pick}
               />
             </div>
