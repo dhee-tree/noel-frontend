@@ -39,7 +39,11 @@ export default function LoginClientPage() {
       if (result?.error) {
         setApiError("Invalid email or password.");
       } else if (result?.ok) {
-        router.push(callbackUrl);
+        // Preserve the hash if it exists in the current URL (e.g. #email-preferences)
+        // This is needed because the server-side redirect cannot see the hash.
+        const hash = window.location.hash;
+        const finalCallbackUrl = hash ? `${callbackUrl}${hash}` : callbackUrl;
+        router.push(finalCallbackUrl);
       }
     } catch (err) {
       console.error("Login failed:", err);
@@ -62,7 +66,13 @@ export default function LoginClientPage() {
         )}
 
         <button
-          onClick={() => signIn("google", { callbackUrl })}
+          onClick={() => {
+            const hash = window.location.hash;
+            const finalCallbackUrl = hash
+              ? `${callbackUrl}${hash}`
+              : callbackUrl;
+            signIn("google", { callbackUrl: finalCallbackUrl });
+          }}
           className={authStyles.googleButton}
           type="button"
         >

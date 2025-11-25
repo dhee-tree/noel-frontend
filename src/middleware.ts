@@ -32,7 +32,9 @@ export default auth((req) => {
   if (privateRoute) {
     // Redirect to login if not logged in OR session has error
     if (!isLoggedIn || hasSessionError) {
-      const callbackUrl = encodeURIComponent(nextUrl.pathname);
+      const callbackUrl = encodeURIComponent(
+        `${nextUrl.pathname}${nextUrl.search}`
+      );
       return NextResponse.redirect(
         new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl)
       );
